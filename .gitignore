@@ -1,0 +1,9 @@
+#folder secret
+src/main/java/resources/
+src/WebContent/.well-known/
+
+DS_Store
+.idea/
+.gradle/
+build/
+*.iml
