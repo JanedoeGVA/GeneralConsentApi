@@ -43,8 +43,27 @@ public class Main {
 
     }
 
-    @Path("/send-sms")
-    @POST
+    @Path("/testdb")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String dbtest() {
+        DB dao = new DB();
+        try {
+            dao.readDataBase();
+            return "it works";
+        } catch (Exception e){
+            return e.getMessage();
+        }
+
+
+    }
+
+
+
+
+
+    // @Path("/send-sms")
+    // @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendSMS(@QueryParam ("phone") String phone) {
         LOG.log(Level.INFO, "send SMS");
@@ -57,8 +76,8 @@ public class Main {
 
     }
 
-    @Path("/send-mail")
-    @POST
+    //@Path("/send-mail")
+    //@POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendMail(@QueryParam ("email") String email) {
         LOG.log(Level.INFO, "send email");
@@ -73,8 +92,8 @@ public class Main {
         }
     }
 
-    @Path("/send-consent")
-    @POST
+    // @Path("/send-consent")
+    //@POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response sendGeneralConsent(@FormDataParam("file") InputStream uploadedInputStream,
                                        @FormDataParam("file") FormDataContentDisposition fileDetail) {
