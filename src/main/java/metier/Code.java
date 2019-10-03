@@ -4,12 +4,12 @@ public class Code {
 
 
     private String code;
-    private long expireTime;
+    private long createTime;
 
 
     public Code (String code) {
         this.code = code;
-        this.expireTime = Utils.getExpireEpochSecond();
+        this.createTime = Utils.getEpochSecond();
     }
 
     public Code () {
@@ -23,11 +23,11 @@ public class Code {
         this.code = code;
     }
 
-    public long getExpireTime() {
-        return expireTime;
+    public long getCreateTime() {
+        return createTime;
     }
 
-    public void setExpireTime(long expireTime) {
-        this.expireTime = expireTime;
+    public void setCreateTime(long createTime) {
+        this.createTime = createTime;
     }
 }

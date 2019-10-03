@@ -9,6 +9,10 @@ import java.util.logging.Logger;
 
 public class DB {
 
+    private static final String TBL_CODE_CHALENGE = "tbl_code_chalenge";
+    private static final String SQL_INSERT = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
+
+
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
 
 
@@ -54,6 +58,18 @@ public class DB {
             connection.close();
             return false;
         }
+    }
+
+    public static boolean addCodeChalenge(String contact, Code code) throws Exception {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
+        statement.setString(1, contact);
+        statement.setString(2, code.getCode());
+        statement.setInt(3, (int)code.getCreateTime());
+        int row = statement.executeUpdate();
+        LOG.log(Level.INFO,"Nombres de lignes insere correctement : " + row);
+        statement.close();
+        connection.close();
     }
 
 

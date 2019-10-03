@@ -21,8 +21,8 @@ public class Utils {
 
     public static long getValideEpochSecond () {return Instant.now().getEpochSecond() - EXPIRE_IN; }
 
-    public static long getExpireEpochSecond () {
-        return Instant.now().getEpochSecond() + EXPIRE_IN;
+    public static long getEpochSecond () {
+        return Instant.now().getEpochSecond();
     }
 
     public static String getProps (String propsName, String value) {

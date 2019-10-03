@@ -56,6 +56,7 @@ public class Main {
                 final String code = Utils.generateCode();
                 final Code challengeCode = new Code(code);
                 ShortMessageService.send(phone, code);
+                // save code in db
                 return Response.status(OK)
                         .entity(challengeCode)
                         .build();
