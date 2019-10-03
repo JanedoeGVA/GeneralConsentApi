@@ -20,7 +20,7 @@ import javax.ws.rs.core.*;
 
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
 @Path("/service")
 public class Main {
@@ -52,7 +52,7 @@ public class Main {
     public Response sendSMS(@QueryParam ("phone") String phone) {
         LOG.log(Level.INFO, "send SMS");
         try {
-            if (DB.checkContactExist(phone)) {
+            if (!DB.checkContactExist(phone)) {
                 final String code = Utils.generateCode();
                 final Code challengeCode = new Code(code);
                 ShortMessageService.send(phone, code);
@@ -60,7 +60,7 @@ public class Main {
                         .entity(challengeCode)
                         .build();
             } else {
-                return Response.status(UNAUTHORIZED)
+                return Response.status(BAD_REQUEST)
                         .entity("You have already request a challenge code, you have to wait 3 minutes to request a new one")
                         .build();
             }
