@@ -16,9 +16,9 @@ public class DB {
         Connection connect = null;
         try {
             // This will load the MySQL driver, each DB has its own driver
-            LOG.log(Level.INFO,"Opened database successfully");
-            LOG.log(Level.INFO,"Opened database successfully");
-            LOG.log(Level.INFO,"Opened database successfully");
+            LOG.log(Level.INFO,"database" + System.getenv("POSTGRES_URL"));
+            LOG.log(Level.INFO,"user: " + System.getenv("POSTGRES_USER"));
+            LOG.log(Level.INFO,"pass" + Utils.getProps(Constant.POSTGRES_PROPS, Constant.DB_PASS));
             Class.forName("org.postgresql.Driver");
             // Setup the connection with the DB
             connect = DriverManager
