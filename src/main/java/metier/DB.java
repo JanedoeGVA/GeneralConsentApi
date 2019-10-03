@@ -60,7 +60,7 @@ public class DB {
         }
     }
 
-    public static boolean addCodeChalenge(String contact, Code code) throws Exception {
+    public static void addCodeChalenge(String contact, Code code) throws Exception {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
         statement.setString(1, contact);
