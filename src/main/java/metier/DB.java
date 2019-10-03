@@ -38,7 +38,7 @@ public class DB {
         PreparedStatement statement = connection.prepareStatement("SELECT CASE WHEN EXISTS (\n" +
                 "    SELECT *\n" +
                 "    FROM tbl_code_chalenge\n" +
-                "    WHERE contact = ? and time >?\n" +
+                "    WHERE contact = ? and time <?\n" +
                 ")\n" +
                 "THEN CAST(1 AS BIT)\n" +
                 "ELSE CAST(0 AS BIT) END;\n");

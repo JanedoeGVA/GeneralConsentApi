@@ -12,7 +12,7 @@ public class Utils {
 
     private static final Logger LOG = Logger.getLogger(Utils.class.getName());
 
-    final static long EXPIRE_IN = 600;
+    final static long EXPIRE_IN = 300;
 
     public static String generateCode () {
         final Random ran = new Random();
