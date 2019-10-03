@@ -34,16 +34,19 @@ public class DB {
     }
 
     public static boolean checkContactExist(String contact) throws Exception {
+
+        long now = Utils.getValideEpochSecond();
+        LOG.log(Level.INFO,"" + now);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement("SELECT CASE WHEN EXISTS (\n" +
                 "    SELECT *\n" +
                 "    FROM tbl_code_chalenge\n" +
-                "    WHERE contact = ? and time <?\n" +
+                "    WHERE contact = ? and time < ? \n" +
                 ")\n" +
                 "THEN CAST(1 AS BIT)\n" +
                 "ELSE CAST(0 AS BIT) END;\n");
         statement.setString(1, contact);
-        statement.setInt(2, (int) Utils.getValideEpochSecond());
+        statement.setInt(2, (int) now);
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
             LOG.log(Level.INFO,"Deja un code");

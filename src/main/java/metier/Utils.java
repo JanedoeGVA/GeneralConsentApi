@@ -12,14 +12,14 @@ public class Utils {
 
     private static final Logger LOG = Logger.getLogger(Utils.class.getName());
 
-    final static long EXPIRE_IN = 300;
+    final static long WAIT_FOR = 180;
 
     public static String generateCode () {
         final Random ran = new Random();
         return String.format("%04d", ran.nextInt(10000));
     }
 
-    public static long getValideEpochSecond () {return Instant.now().getEpochSecond() - EXPIRE_IN; }
+    public static long getValideEpochSecond () {return Instant.now().getEpochSecond() - WAIT_FOR; }
 
     public static long getEpochSecond () {
         return Instant.now().getEpochSecond();
