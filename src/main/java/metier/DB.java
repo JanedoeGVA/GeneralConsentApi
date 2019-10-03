@@ -11,6 +11,7 @@ public class DB {
 
     private static final String TBL_CODE_CHALENGE = "tbl_code_chalenge";
     private static final String SQL_INSERT = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
+    private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time < ?";
 
 
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
@@ -38,9 +39,7 @@ public class DB {
         long now = Utils.getValideEpochSecond();
         LOG.log(Level.INFO,"" + now);
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT *\n" +
-                "    FROM tbl_code_chalenge\n" +
-                "    WHERE contact = ? and time < ? ");
+        PreparedStatement statement = connection.prepareStatement(SQL_CHALLENGE_EXIST);
         statement.setString(1, contact);
         statement.setInt(2, (int) now);
         ResultSet resultSet = statement.executeQuery();

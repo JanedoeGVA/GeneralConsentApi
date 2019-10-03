@@ -55,7 +55,7 @@ public class Main {
             if (!DB.checkContactExist(phone)) {
                 final String code = Utils.generateCode();
                 final Code challengeCode = new Code(code);
-                ShortMessageService.send(phone, code);
+                // ShortMessageService.send(phone, code);
                 // save code in db
                 return Response.status(OK)
                         .entity(challengeCode)
