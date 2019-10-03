@@ -40,8 +40,7 @@ public class DB {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement("SELECT *\n" +
                 "    FROM tbl_code_chalenge\n" +
-                "    WHERE contact = ? and time < ? \n" +
-                ")");
+                "    WHERE contact = ? and time < ? ");
         statement.setString(1, contact);
         statement.setInt(2, (int) now);
         ResultSet resultSet = statement.executeQuery();
