@@ -49,7 +49,7 @@ public class Main {
     public String dbtest() {
         DB dao = new DB();
         try {
-            dao.readDataBase();
+            dao.connectTest();
             return "it works";
         } catch (Exception e){
             return e.getMessage();

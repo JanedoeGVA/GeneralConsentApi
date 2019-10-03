@@ -11,6 +11,9 @@ public class Constant {
     public static final String ACCOUNT_SID = "account_sid";
     public static final String AUTH_TOKEN = "auth_token";
     public static final String PHONE_NUMBER = "phone_number";
+    public static final String POSTGRES_PROPS = "postgres-pass.properties";
+    public static final String DB_PASS = "db_pass";
+
 
 
     // TODO: A mettre dans var environment du docker
