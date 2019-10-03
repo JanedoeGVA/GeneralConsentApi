@@ -20,6 +20,7 @@ import javax.ws.rs.core.*;
 
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.UNAUTHORIZED;
 
 @Path("/service")
 public class Main {
@@ -43,36 +44,31 @@ public class Main {
 
     }
 
-    @Path("/testdb")
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String dbtest() {
-        DB dao = new DB();
-        try {
-            dao.connectTest();
-            return "it works";
-        } catch (Exception e){
-            return e.getMessage();
-        }
 
 
-    }
-
-
-
-
-
-    // @Path("/send-sms")
-    // @POST
+    @Path("/send-sms")
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendSMS(@QueryParam ("phone") String phone) {
         LOG.log(Level.INFO, "send SMS");
-        final String code = Utils.generateCode();
-        final Code challengeCode = new Code(code);
-        ShortMessageService.send(phone, code);
-        return Response.status(OK)
-                .entity(challengeCode)
-                .build();
+        try {
+            if (DB.checkContactExist(phone)) {
+                final String code = Utils.generateCode();
+                final Code challengeCode = new Code(code);
+                ShortMessageService.send(phone, code);
+                return Response.status(OK)
+                        .entity(challengeCode)
+                        .build();
+            } else {
+                return Response.status(UNAUTHORIZED)
+                        .entity("You have already request a challenge code, you have to wait 3 minutes to request a new one")
+                        .build();
+            }
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, e.getMessage());
+            return Response.status(INTERNAL_SERVER_ERROR).build();
+        }
+
 
     }
 

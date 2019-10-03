@@ -19,6 +19,8 @@ public class Utils {
         return String.format("%04d", ran.nextInt(10000));
     }
 
+    public static long getValideEpochSecond () {return Instant.now().getEpochSecond() - EXPIRE_IN; }
+
     public static long getExpireEpochSecond () {
         return Instant.now().getEpochSecond() + EXPIRE_IN;
     }
