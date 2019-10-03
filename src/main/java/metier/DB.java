@@ -39,6 +39,7 @@ public class DB {
         LOG.log(Level.INFO,"" + now);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_CHALLENGE_EXIST);
+        LOG.log(Level.INFO, "phone : " + contact);
         statement.setString(1, contact);
         statement.setInt(2, (int) now);
         ResultSet resultSet = statement.executeQuery();
@@ -60,6 +61,7 @@ public class DB {
     public static void addCodeChalenge(String contact, ChallengeCode challengeCode) throws Exception {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
+        LOG.log(Level.INFO, "phone : " + contact);
         statement.setString(1, contact);
         statement.setString(2, challengeCode.getCode());
         statement.setInt(3, (int) challengeCode.getCreateTime());

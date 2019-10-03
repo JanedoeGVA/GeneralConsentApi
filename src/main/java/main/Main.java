@@ -50,6 +50,7 @@ public class Main {
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendSMS(@QueryParam ("phone") String phone) {
         LOG.log(Level.INFO, "send SMS");
+        LOG.log(Level.INFO, "phone : " + phone);
         try {
             if (!DB.checkContactExist(phone)) {
                 final String code = Utils.generateCode();
