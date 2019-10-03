@@ -1,18 +1,18 @@
 package metier;
 
-public class Code {
+public class ChallengeCode {
 
 
     private String code;
     private long createTime;
 
 
-    public Code (String code) {
+    public ChallengeCode(String code) {
         this.code = code;
         this.createTime = Utils.getEpochSecond();
     }
 
-    public Code () {
+    public ChallengeCode() {
     }
 
     public String getCode() {

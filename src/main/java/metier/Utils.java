@@ -16,7 +16,7 @@ public class Utils {
 
     public static String generateCode () {
         final Random ran = new Random();
-        return String.format("%04d", ran.nextInt(10000));
+        return String.format("%06d", ran.nextInt(1000000));
     }
 
     public static long getValideEpochSecond () {return Instant.now().getEpochSecond() - WAIT_FOR; }

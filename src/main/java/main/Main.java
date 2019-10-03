@@ -4,7 +4,6 @@ import metier.*;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -54,9 +53,9 @@ public class Main {
         try {
             if (!DB.checkContactExist(phone)) {
                 final String code = Utils.generateCode();
-                final Code challengeCode = new Code(code);
+                final ChallengeCode challengeCode = new ChallengeCode(code);
                 // ShortMessageService.send(phone, code);
-                // save code in db
+                DB.addCodeChalenge(phone,challengeCode);
                 return Response.status(OK)
                         .entity(challengeCode)
                         .build();
@@ -79,7 +78,7 @@ public class Main {
     public Response sendMail(@QueryParam ("email") String email) {
         LOG.log(Level.INFO, "send email");
         final String code = Utils.generateCode();
-        final Code challengeCode = new Code(code);
+        final ChallengeCode challengeCode = new ChallengeCode(code);
         try {
             SMTP.sendMail(email,code);
             return Response.status(OK).entity(challengeCode).build();

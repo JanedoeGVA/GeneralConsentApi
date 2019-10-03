@@ -3,7 +3,6 @@ package metier;
 import outils.Constant;
 
 import java.sql.*;
-import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,12 +57,12 @@ public class DB {
         }
     }
 
-    public static void addCodeChalenge(String contact, Code code) throws Exception {
+    public static void addCodeChalenge(String contact, ChallengeCode challengeCode) throws Exception {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
         statement.setString(1, contact);
-        statement.setString(2, code.getCode());
-        statement.setInt(3, (int)code.getCreateTime());
+        statement.setString(2, challengeCode.getCode());
+        statement.setInt(3, (int) challengeCode.getCreateTime());
         int row = statement.executeUpdate();
         LOG.log(Level.INFO,"Nombres de lignes insere correctement : " + row);
         statement.close();
