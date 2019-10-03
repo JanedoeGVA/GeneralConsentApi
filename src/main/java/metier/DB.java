@@ -10,7 +10,7 @@ public class DB {
 
     private static final String TBL_CODE_CHALENGE = "tbl_code_chalenge";
     private static final String SQL_INSERT = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
-    private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time < ?";
+    private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time > ?";
 
 
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
