@@ -38,13 +38,10 @@ public class DB {
         long now = Utils.getValideEpochSecond();
         LOG.log(Level.INFO,"" + now);
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement("SELECT CASE WHEN EXISTS (\n" +
-                "    SELECT *\n" +
+        PreparedStatement statement = connection.prepareStatement("SELECT *\n" +
                 "    FROM tbl_code_chalenge\n" +
                 "    WHERE contact = ? and time < ? \n" +
-                ")\n" +
-                "THEN CAST(1 AS BIT)\n" +
-                "ELSE CAST(0 AS BIT) END;\n");
+                ")");
         statement.setString(1, contact);
         statement.setInt(2, (int) now);
         ResultSet resultSet = statement.executeQuery();
