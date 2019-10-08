@@ -80,10 +80,8 @@ public class Main {
         }
         try {
             if (!DB.checkContactExist(phone)) {
-                final String code = Utils.generateCode();
-                final ChallengeCode challengeCode = new ChallengeCode(code);
-                // ShortMessageService.send(phone, code);
-                DB.addCodeChalenge(phone,challengeCode);
+                ChallengeCode challengeCode = generateChallengeCode(phone);
+                ShortMessageService.send(phone, challengeCode.getCode());
                 return Response.status(OK)
                         .entity(challengeCode)
                         .build();
@@ -110,15 +108,29 @@ public class Main {
                     .entity("Le mail ne correspond pas à une adresse correct")
                     .build();
         }
-        final String code = Utils.generateCode();
-        final ChallengeCode challengeCode = new ChallengeCode(code);
         try {
-            // SMTP.sendMail(email,code);
-            return Response.status(OK).entity(challengeCode).build();
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "error Exception ", ex);
+            if (!DB.checkContactExist(email)) {
+                ChallengeCode challengeCode = generateChallengeCode(email);
+                SMTP.sendMail(email,challengeCode.getCode());
+                return Response.status(OK)
+                        .entity(challengeCode)
+                        .build();
+            } else {
+                return Response.status(BAD_REQUEST)
+                        .entity("You have already request a challenge code, you have to wait 3 minutes to request a new one")
+                        .build();
+            }
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, e.getMessage());
             return Response.status(INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private static ChallengeCode generateChallengeCode (String contact) throws Exception {
+        final String code = Utils.generateCode();
+        final ChallengeCode challengeCode = new ChallengeCode(code);
+        DB.addCodeChalenge(contact,challengeCode);
+        return challengeCode;
     }
 
     // @Path("/send-consent")
