@@ -4,6 +4,8 @@ import java.util.*;
 import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.cars.framework.secrets.DockerSecretLoadException;
 import com.cars.framework.secrets.DockerSecrets;
@@ -36,13 +38,30 @@ public class Utils {
         }
     }
 
+    // Number must start with +417 and contains 8 digits after
+//    public static final String VALID_NATEL_NUMBER_REGEX = "\\+417\\d\\d\\d\\d\\d\\d\\d\\d";
+//
+//    public static boolean checkPhone (String phone) {
+//        final boolean match = phone.matches(VALID_NATEL_NUMBER_REGEX);
+//        LOG.log(Level.INFO,"Number isMatching pattern" + match);
+//        return match;
+//    }
 
-    public static boolean checkPhone (String phone) {
-        // Number must start with +417 and contains 8 digits after
-        String pattern2 = "\\+417\\d\\d\\d\\d\\d\\d\\d\\d";
-        final boolean match = phone.matches(pattern2);
-        LOG.log(Level.INFO,"Number isMatching pattern" + match);
-        return match;
+    public static final Pattern VALID_NATEL_NUMBER_REGEX = Pattern.compile("^\\+417\\d\\d\\d\\d\\d\\d\\d\\d$");
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validatePhone(String phone) {
+        return validate(phone,VALID_NATEL_NUMBER_REGEX);
+    }
+
+    public static boolean validateMail(String email) {
+        return validate(email,VALID_EMAIL_ADDRESS_REGEX);
+    }
+
+    private static boolean validate(String str,Pattern pattern) {
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
     }
 
 }

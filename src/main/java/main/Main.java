@@ -49,14 +49,23 @@ public class Main {
     public Response checkPhone(@QueryParam ("phone") String phone) {
         LOG.log(Level.INFO, "check phone");
         LOG.log(Level.INFO, "phone : " + phone);
-        final String match = (Utils.checkPhone(phone)) ? "le numero correspond a un numero de natel" : "le numero ne correspond pas";
+        final String match = (Utils.validatePhone(phone)) ? "le numero correspond a un numero de natel" : "le numero ne correspond pas";
         return Response.status(OK)
                 .entity(match)
                 .build();
-
     }
 
-
+    @Path("/check-email")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkEmail(@QueryParam ("mail") String mail) {
+        LOG.log(Level.INFO, "check mail");
+        LOG.log(Level.INFO, "mail : " + mail);
+        final String match = (Utils.validateMail(mail)) ? "correspond a un mail correct" : "ne correspond pas a un mail correct";
+        return Response.status(OK)
+                .entity(match)
+                .build();
+    }
 
     @Path("/send-sms")
     @POST
@@ -64,6 +73,11 @@ public class Main {
     public Response sendSMS(@QueryParam ("phone") String phone) {
         LOG.log(Level.INFO, "send SMS");
         LOG.log(Level.INFO, "phone : " + phone);
+        if (!Utils.validatePhone(phone)) {
+            return Response.status(BAD_REQUEST)
+                    .entity("Le numéro ne correspond pas à un natel")
+                    .build();
+        }
         try {
             if (!DB.checkContactExist(phone)) {
                 final String code = Utils.generateCode();
@@ -86,15 +100,20 @@ public class Main {
 
     }
 
-    //@Path("/send-mail")
-    //@POST
+    @Path("/send-mail")
+    @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendMail(@QueryParam ("email") String email) {
         LOG.log(Level.INFO, "send email");
+        if (!Utils.validateMail(email)) {
+            return Response.status(BAD_REQUEST)
+                    .entity("Le mail ne correspond pas à une adresse correct")
+                    .build();
+        }
         final String code = Utils.generateCode();
         final ChallengeCode challengeCode = new ChallengeCode(code);
         try {
-            SMTP.sendMail(email,code);
+            // SMTP.sendMail(email,code);
             return Response.status(OK).entity(challengeCode).build();
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "error Exception ", ex);
