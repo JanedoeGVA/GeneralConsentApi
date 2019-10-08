@@ -36,4 +36,13 @@ public class Utils {
         }
     }
 
+
+    public static boolean checkPhone (String phone) {
+        // Number must start with +417 and contains 8 digits after
+        String pattern2 = "\\+417\\d\\d\\d\\d\\d\\d\\d\\d";
+        final boolean match = phone.matches(pattern2);
+        LOG.log(Level.INFO,"Number isMatching pattern" + match);
+        return match;
+    }
+
 }

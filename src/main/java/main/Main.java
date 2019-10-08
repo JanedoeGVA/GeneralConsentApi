@@ -43,6 +43,19 @@ public class Main {
 
     }
 
+    @Path("/check-phone")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkPhone(@QueryParam ("phone") String phone) {
+        LOG.log(Level.INFO, "check phone");
+        LOG.log(Level.INFO, "phone : " + phone);
+        final String match = (Utils.checkPhone(phone)) ? "le numero correspond a un numero de natel" : "le numero ne correspond pas";
+        return Response.status(OK)
+                .entity(match)
+                .build();
+
+    }
+
 
 
     @Path("/send-sms")
