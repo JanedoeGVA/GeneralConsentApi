@@ -12,6 +12,7 @@ public class DB {
     private static final String SQL_INSERT_CHALLENGE = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
     private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time > ?";
     private static final String SQL_CHALLENGE_VALID = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and code = ? and pending = true and time > ?";
+    private static final String SQL_UPDATE_PENDING = "UPDATE tbl_code_chalenge SET pending = ? WHERE contact = ? AND code = ?";
 
 
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
@@ -98,6 +99,18 @@ public class DB {
         }
 
 
+    }
+
+    public static void unPendingCode(String contact,String code) throws Exception {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PENDING);
+        statement.setBoolean(1, false);
+        statement.setString(2, contact);
+        statement.setString(3, code);
+        int row = statement.executeUpdate();
+        LOG.log(Level.INFO,"Nombres de lignes mis a jour : " + row);
+        statement.close();
+        connection.close();
     }
 
 
