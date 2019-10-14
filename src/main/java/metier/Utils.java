@@ -1,9 +1,6 @@
 package metier;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.time.temporal.ChronoUnit;
@@ -16,6 +13,7 @@ import java.util.regex.Pattern;
 
 import com.cars.framework.secrets.DockerSecretLoadException;
 import com.cars.framework.secrets.DockerSecrets;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -35,7 +33,7 @@ public class Utils {
 
     final static long WAIT_FOR = 180;
 
-    final static long EXPIRE_IN = 15;
+    final static long EXPIRE_IN_MINUTES = 15;
 
     public static String generateCode () {
         final Random ran = new Random();
@@ -43,6 +41,8 @@ public class Utils {
     }
 
     public static long getValideEpochSecond () {return Instant.now().getEpochSecond() - WAIT_FOR; }
+
+    public static long getExpireEpochSecond () {return Instant.now().getEpochSecond()- EXPIRE_IN_MINUTES*60; }
 
     public static long getEpochSecond () {
         return Instant.now().getEpochSecond();
@@ -80,41 +80,39 @@ public class Utils {
         return matcher.find();
     }
 
-    public static String generateJWSToken (String contact,String code) {
-        final InputStream keyStoreFile;
-        String jws = null;
+    private static Key getKeystore ()  {
+        final Key key = null;
         try {
-            keyStoreFile = loadSecretFile(KEYSTORE_FILE);
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(keyStoreFile, getProps(KEYSTORE_PASS_FILE,PASS_VALUE).toCharArray());
-            final Key key = keyStore.getKey(getProps(KEYSTORE_PASS_FILE,ALIAS_VALUE), getProps(KEYSTORE_PASS_FILE,PASS_VALUE).toCharArray());
-            if (key == null) {
-                LOG.log(Level.INFO, " key is null");
-            }
-            Date exp = Date.from(Instant.now().plus(EXPIRE_IN, ChronoUnit.MINUTES));
-            Date now = Date.from(Instant.now());
-            jws = Jwts.builder().setSubject(contact).setIssuedAt(now).setExpiration(exp).signWith(SignatureAlgorithm.RS256, key).claim(PAYLOAD_CODE, code).compact();
-            LOG.log(Level.INFO, "JWS : " + jws);
-        } catch (
-                FileNotFoundException e) {
-            LOG.log(Level.SEVERE, "Keystore file not found");
-        } catch (
-                KeyStoreException e) {
-            LOG.log(Level.SEVERE, e.getMessage());
-        } catch (
-                CertificateException e) {
-            LOG.log(Level.SEVERE, e.getMessage());
-        } catch (
-                NoSuchAlgorithmException e) {
-            LOG.log(Level.SEVERE, e.getMessage());
-        } catch (
-                IOException e) {
-            LOG.log(Level.SEVERE, e.getMessage());
-        } catch (
-                UnrecoverableKeyException e) {
-            LOG.log(Level.SEVERE, e.getMessage());
+            final InputStream keyStoreFile = loadSecretFile(KEYSTORE_FILE);
+            final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(keyStoreFile, getProps(KEYSTORE_PASS_FILE, PASS_VALUE).toCharArray());
+            return keyStore.getKey(getProps(KEYSTORE_PASS_FILE, ALIAS_VALUE), getProps(KEYSTORE_PASS_FILE, PASS_VALUE).toCharArray());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
         }
+        return key;
+    }
+
+    public static String generateJWSToken (String contact,String code) {
+        final Date exp = Date.from(Instant.now().plus(EXPIRE_IN_MINUTES, ChronoUnit.MINUTES));
+        final Date now = Date.from(Instant.now());
+        final String jws = Jwts.builder().setSubject(contact).setIssuedAt(now).setExpiration(exp).signWith(SignatureAlgorithm.RS256, getKeystore()).claim(PAYLOAD_CODE, code).compact();
+        LOG.log(Level.INFO, "JWS : " + jws);
         return jws;
+    }
+
+    public static void valideJWSToken (String jwtToken) throws JwtException {
+        Jwts.parser().setSigningKey(getKeystore()).parseClaimsJws(jwtToken);
     }
 
 }

@@ -7,15 +7,12 @@ import outils.Constant;
 
 public class ShortMessageService {
 
-
-
-
-
     public static void send (String phoneNumber,String code) {
-
         Twilio.init(Utils.getProps(Constant.TWILIO_PROPS,Constant.ACCOUNT_SID),Utils.getProps(Constant.TWILIO_PROPS,Constant.AUTH_TOKEN));
-        Message message = Message.creator(new PhoneNumber(phoneNumber),new PhoneNumber(Utils.getProps(Constant.TWILIO_PROPS,Constant.PHONE_NUMBER)),String.format(Constant.SMS_BODY,code)).create();
-        System.out.println(message.getSid());
+        Message.creator(new PhoneNumber(phoneNumber),new PhoneNumber(Utils.getProps(Constant.TWILIO_PROPS,Constant.PHONE_NUMBER)),String.format(Constant.SMS_BODY,code)).create();
     }
+
+
+
 
 }

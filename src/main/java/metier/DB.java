@@ -9,8 +9,9 @@ import java.util.logging.Logger;
 public class DB {
 
     private static final String TBL_CODE_CHALENGE = "tbl_code_chalenge";
-    private static final String SQL_INSERT = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
+    private static final String SQL_INSERT_CHALLENGE = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
     private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time > ?";
+    private static final String SQL_CHALLENGE_VALID = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and code = ? and pending = true and time > ?";
 
 
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
@@ -60,8 +61,8 @@ public class DB {
 
     public static void addCodeChalenge(String contact, ChallengeCode challengeCode) throws Exception {
         Connection connection = getConnection();
-        PreparedStatement statement = connection.prepareStatement(SQL_INSERT);
-        LOG.log(Level.INFO, "phone : " + contact);
+        PreparedStatement statement = connection.prepareStatement(SQL_INSERT_CHALLENGE);
+        LOG.log(Level.INFO, "contact : " + contact);
         statement.setString(1, contact);
         statement.setString(2, challengeCode.getCode());
         statement.setInt(3, (int) challengeCode.getCreateTime());
@@ -69,6 +70,31 @@ public class DB {
         LOG.log(Level.INFO,"Nombres de lignes insere correctement : " + row);
         statement.close();
         connection.close();
+    }
+
+    public static boolean valideCode(String contact,String code) throws Exception {
+        long expire = Utils.getExpireEpochSecond();
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQL_CHALLENGE_VALID);
+        statement.setString(1, contact);
+        statement.setString(2, code);
+        statement.setInt(3, (int) expire);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            LOG.log(Level.INFO,"Existe");
+            statement.close();
+            resultSet.close();
+            connection.close();
+            return true;
+        } else {
+            LOG.log(Level.INFO,"existe pas ou plus valide");
+            statement.close();
+            resultSet.close();
+            connection.close();
+            return false;
+        }
+
+
     }
 
 

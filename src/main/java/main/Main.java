@@ -1,5 +1,6 @@
 package main;
 
+import io.jsonwebtoken.JwtException;
 import metier.*;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
@@ -14,9 +15,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
@@ -45,14 +48,25 @@ public class Main {
     }
 
 
-    @Path("/generate")
+    @Path("/verification")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response generate(@QueryParam ("phone") String phone,@QueryParam("code") String code) {
-        final String jws = Utils.generateJWSToken(phone,code);
-        return Response.status(OK)
-                .entity(jws)
-                .build();
+    public Response generate(@QueryParam ("contact") String contact,@QueryParam("code") String code) {
+        try {
+            if (DB.valideCode(contact,code)) {
+                final String jws = Utils.generateJWSToken(contact, code);
+                return Response.status(OK)
+                        .entity(jws)
+                        .build();
+            } else {
+                return Response.status(BAD_REQUEST)
+                        .entity("Le code n'est pas valide ou a déjà été utilisé")
+                        .build();
+            }
+        } catch (Exception ex){
+            LOG.log(Level.SEVERE, ex.getMessage());
+            return Response.status(INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 
@@ -147,19 +161,37 @@ public class Main {
         return challengeCode;
     }
 
-    // @Path("/send-consent")
-    //@POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response sendGeneralConsent(@FormDataParam("file") InputStream uploadedInputStream,
-                                       @FormDataParam("file") FormDataContentDisposition fileDetail) {
 
+
+
+    @Path("/send-consent")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response sendGeneralConsent(
+            @HeaderParam(AUTHORIZATION) String bearer,
+            @FormDataParam("file") InputStream uploadedInputStream,
+            @FormDataParam("file") FormDataContentDisposition fileDetail,
+            @FormDataParam("contact") Contact contact,
+            @Nullable @FormDataParam("representant") Representant representant)
+
+    {
+        String token = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+        try {
+            Utils.valideJWSToken(token);
+        } catch (JwtException e) {
+            return Response.status(BAD_REQUEST)
+                    .entity("Vous n'avez pas la permission de poster ")
+                    .build();
+        }
+
+        LOG.log(Level.INFO,"token" + token);
+        LOG.log(Level.INFO,"contact" + contact.toString());
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {
-
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    PDF.create(path);
+                    //PDF.create(path);
                 } catch(Exception e) {
                     LOG.log(Level.SEVERE,"error pdf",e);
                     return Response.status(INTERNAL_SERVER_ERROR).build();
