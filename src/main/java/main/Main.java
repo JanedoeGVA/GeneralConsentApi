@@ -52,6 +52,9 @@ public class Main {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response generate(@QueryParam ("contact") String contact,@QueryParam("code") String code) {
+        LOG.log(Level.INFO,"verification call");
+        LOG.log(Level.INFO,"contact" + contact);
+        LOG.log(Level.INFO,"code" + code);
         try {
             if (DB.valideCode(contact,code)) {
                 final String jws = Utils.generateJWSToken(contact, code);
