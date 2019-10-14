@@ -114,7 +114,7 @@ public class Main {
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
-                        .entity("You have already request a challenge code, you have to wait 3 minutes to request a new one")
+                        .entity("Vous devez attendre avant de redemander un code")
                         .build();
             }
         } catch (Exception e) {
