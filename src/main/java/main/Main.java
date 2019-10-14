@@ -109,9 +109,8 @@ public class Main {
         try {
             if (!DB.checkContactExist(phone)) {
                 ChallengeCode challengeCode = generateChallengeCode(phone);
-                ShortMessageService.send(phone, challengeCode.getCode());
+                //ShortMessageService.send(phone, challengeCode.getCode());
                 return Response.status(OK)
-                        .entity(challengeCode)
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
@@ -139,7 +138,7 @@ public class Main {
         try {
             if (!DB.checkContactExist(email)) {
                 ChallengeCode challengeCode = generateChallengeCode(email);
-                SMTP.sendMail(email,challengeCode.getCode());
+                // SMTP.sendMail(email,challengeCode.getCode());
                 return Response.status(OK)
                         .entity(challengeCode)
                         .build();
