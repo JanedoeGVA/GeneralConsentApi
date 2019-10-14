@@ -21,6 +21,8 @@ import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 
+
+
 @Path("/service")
 public class Main {
 
@@ -40,8 +42,20 @@ public class Main {
         // Use .buildFromMap()
         URI output = builder.buildFromMap(parameters);
         return output.toString();
-
     }
+
+
+    @Path("/generate")
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response generate(@QueryParam ("phone") String phone,@QueryParam("code") String code) {
+        final String jws = Utils.generateJWSToken(phone,code);
+        return Response.status(OK)
+                .entity(jws)
+                .build();
+    }
+
+
 
     @Path("/check-phone")
     @POST
