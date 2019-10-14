@@ -58,8 +58,9 @@ public class Main {
         try {
             if (DB.valideCode(contact,code)) {
                 final String jws = Utils.generateJWSToken(contact, code);
+                TokenJWT tokenJWT = new TokenJWT(jws);
                 return Response.status(OK)
-                        .entity(jws)
+                        .entity(tokenJWT)
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
