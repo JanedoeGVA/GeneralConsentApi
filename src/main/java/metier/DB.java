@@ -73,7 +73,10 @@ public class DB {
     }
 
     public static boolean valideCode(String contact,String code) throws Exception {
+        LOG.log(Level.INFO,"contact" +contact);
+        LOG.log(Level.INFO,"code" + code);
         long expire = Utils.getExpireEpochSecond();
+        LOG.log(Level.INFO,"expire" + expire);
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_CHALLENGE_VALID);
         statement.setString(1, contact);
