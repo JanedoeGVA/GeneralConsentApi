@@ -127,8 +127,9 @@ public class Main {
                 return Response.status(OK)
                         .build();
             } else {
+                LOG.log(Level.INFO,"too many request");
                 return Response.status(BAD_REQUEST)
-                        .entity(new MessageError("too many request","ous devez attendre 3 minutes avant de redemander un nouveau code"))
+                        .entity(new MessageError("too many request","vous devez attendre 3 minutes avant de redemander un nouveau code"))
                         .build();
             }
         } catch (Exception e) {
