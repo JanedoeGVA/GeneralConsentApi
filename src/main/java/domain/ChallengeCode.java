@@ -1,4 +1,6 @@
-package metier;
+package domain;
+
+import outils.Utils;
 
 public class ChallengeCode {
 

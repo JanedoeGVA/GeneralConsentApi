@@ -1,9 +1,16 @@
 package main;
 
+import dao.DB;
+import domain.ChallengeCode;
+import domain.Contact;
+import domain.Representant;
+import domain.TokenJWT;
+import entity.MessageError;
+import entity.ResponseMessage;
 import io.jsonwebtoken.JwtException;
-import metier.*;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import outils.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,12 +71,14 @@ public class Main {
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
-                        .entity("Le code n'est pas valide ou a déjà été utilisé")
+                        .entity(new MessageError("not valid","Le code n'est pas valide ou a déjà été utilisé"))
                         .build();
             }
         } catch (Exception ex){
             LOG.log(Level.SEVERE, ex.getMessage());
-            return Response.status(INTERNAL_SERVER_ERROR).build();
+            return Response.status(INTERNAL_SERVER_ERROR)
+                    .entity(new MessageError("server error","Un problème est survenu"))
+                    .build();
         }
     }
 
@@ -82,8 +91,9 @@ public class Main {
         LOG.log(Level.INFO, "check phone");
         LOG.log(Level.INFO, "phone : " + phone);
         final String match = (Utils.validatePhone(phone)) ? "le numero correspond a un numero de natel" : "le numero ne correspond pas";
+
         return Response.status(OK)
-                .entity(match)
+                .entity(new ResponseMessage(match))
                 .build();
     }
 
@@ -95,7 +105,7 @@ public class Main {
         LOG.log(Level.INFO, "mail : " + mail);
         final String match = (Utils.validateMail(mail)) ? "correspond a un mail correct" : "ne correspond pas a un mail correct";
         return Response.status(OK)
-                .entity(match)
+                .entity(new ResponseMessage(match))
                 .build();
     }
 
@@ -107,7 +117,7 @@ public class Main {
         LOG.log(Level.INFO, "phone : " + phone);
         if (!Utils.validatePhone(phone)) {
             return Response.status(BAD_REQUEST)
-                    .entity("Le numéro ne correspond pas à un natel")
+                    .entity(new MessageError("invalid phone","Le numéro ne correspond pas à un natel"))
                     .build();
         }
         try {
@@ -118,12 +128,14 @@ public class Main {
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
-                        .entity("Vous devez attendre avant de redemander un code")
+                        .entity(new MessageError("too many request","ous devez attendre 3 minutes avant de redemander un nouveau code"))
                         .build();
             }
         } catch (Exception e) {
             LOG.log(Level.SEVERE, e.getMessage());
-            return Response.status(INTERNAL_SERVER_ERROR).build();
+            return Response.status(INTERNAL_SERVER_ERROR)
+                    .entity(new MessageError("server error","Un problème est survenu"))
+                    .build();
         }
 
 
@@ -136,7 +148,7 @@ public class Main {
         LOG.log(Level.INFO, "send email");
         if (!Utils.validateMail(email)) {
             return Response.status(BAD_REQUEST)
-                    .entity("Le mail ne correspond pas à une adresse correct")
+                    .entity(new MessageError("invalid mail","Le mail ne correspond pas à une adresse correct"))
                     .build();
         }
         try {
@@ -148,12 +160,14 @@ public class Main {
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
-                        .entity("You have already request a challenge code, you have to wait 3 minutes to request a new one")
+                        .entity(new MessageError("too many request","Vous devez attendre 3 minutes avant de redemander un nouveau code"))
                         .build();
             }
         } catch (Exception e) {
             LOG.log(Level.SEVERE, e.getMessage());
-            return Response.status(INTERNAL_SERVER_ERROR).build();
+            return Response.status(INTERNAL_SERVER_ERROR)
+                    .entity(new MessageError("server error","Un problème est survenu"))
+                    .build();
         }
     }
 
@@ -194,7 +208,7 @@ public class Main {
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    //PDF.create(path);
+                    //PDFCreator.create(path);
                 } catch(Exception e) {
                     LOG.log(Level.SEVERE,"error pdf",e);
                     return Response.status(INTERNAL_SERVER_ERROR).build();

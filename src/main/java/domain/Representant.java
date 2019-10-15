@@ -1,4 +1,4 @@
-package metier;
+package domain;
 
 public class Representant {
     private String nom;

@@ -1,4 +1,4 @@
-package metier;
+package domain;
 
 public class Contact {
     private String nom;

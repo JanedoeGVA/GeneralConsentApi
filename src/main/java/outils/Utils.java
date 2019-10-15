@@ -1,4 +1,4 @@
-package metier;
+package outils;
 
 import java.io.*;
 import java.security.*;
@@ -16,6 +16,7 @@ import com.cars.framework.secrets.DockerSecrets;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import dao.DB;
 
 public class Utils {
 

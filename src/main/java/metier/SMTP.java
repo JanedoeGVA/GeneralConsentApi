@@ -2,6 +2,7 @@ package metier;
 
 import com.sendgrid.*;
 import outils.Constant;
+import outils.Utils;
 
 import java.io.IOException;
 import java.util.logging.Logger;

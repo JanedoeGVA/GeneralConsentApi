@@ -13,7 +13,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-public class PDF {
+public class PDFCreator {
 
 
         public static void create (Path path) throws Exception {
@@ -27,7 +27,7 @@ public class PDF {
             // rect can be used to get the page width and height
             document.addPage(page1);
 
-            // Create a new font object selecting one of the PDF base fonts
+            // Create a new font object selecting one of the PDFCreator base fonts
             PDFont fontPlain = PDType1Font.HELVETICA;
             PDFont fontBold = PDType1Font.HELVETICA_BOLD;
             PDFont fontItalic = PDType1Font.HELVETICA_OBLIQUE;
