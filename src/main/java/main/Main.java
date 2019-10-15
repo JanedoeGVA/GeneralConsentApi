@@ -27,10 +27,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static javax.ws.rs.core.Response.Status.OK;
-import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-
+import static javax.ws.rs.core.Response.Status.*;
 
 
 @Path("/service")
@@ -124,7 +121,7 @@ public class Main {
             if (!DB.checkContactExist(phone)) {
                 ChallengeCode challengeCode = generateChallengeCode(phone);
                 //ShortMessageService.send(phone, challengeCode.getCode());
-                return Response.status(OK)
+                return Response.status(NO_CONTENT)
                         .build();
             } else {
                 LOG.log(Level.INFO,"too many request");
