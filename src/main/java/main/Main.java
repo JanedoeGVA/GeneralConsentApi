@@ -8,6 +8,7 @@ import domain.TokenJWT;
 import entity.MessageError;
 import entity.ResponseMessage;
 import io.jsonwebtoken.JwtException;
+import metier.PDFCreator;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import outils.Utils;
@@ -32,6 +33,7 @@ import static javax.ws.rs.core.Response.Status.*;
 
 @Path("/service")
 public class Main {
+
 
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
 
@@ -180,40 +182,45 @@ public class Main {
 
 
     @Path("/send-consent")
+
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response sendGeneralConsent(
-            @HeaderParam(AUTHORIZATION) String bearer,
+            // @HeaderParam(AUTHORIZATION) String bearer,
+
             @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("contact") Contact contact,
-            @Nullable @FormDataParam("representant") Representant representant)
+            @FormDataParam("file") FormDataContentDisposition fileDetail
+//            @FormDataParam("contact") Contact contact,
+//            @Nullable @FormDataParam("representant") Representant representant
+          )
 
     {
-        String token = bearer.substring(bearer.lastIndexOf(" ") + 1 );
-        try {
-            Utils.valideJWSToken(token);
-        } catch (JwtException e) {
-            return Response.status(BAD_REQUEST)
-                    .entity("Vous n'avez pas la permission de poster ")
-                    .build();
-        }
+        // String token = bearer.substring(bearer.lastIndexOf(" ") + 1 );
+//        try {
+//            //Utils.valideJWSToken(token);
+//        } catch (JwtException e) {
+//            return Response.status(BAD_REQUEST)
+//                    .entity("Vous n'avez pas la permission de poster ")
+//                    .build();
+//        }
 
-        LOG.log(Level.INFO,"token" + token);
-        LOG.log(Level.INFO,"contact" + contact.toString());
+        // LOG.log(Level.INFO,"token" + token);
+        //LOG.log(Level.INFO,"contact" + contact.toString());
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    //PDFCreator.create(path);
+                    PDFCreator.create(path);
+                    LOG.log(Level.INFO,"ficheir creer");
+                    return Response.status(OK).build();
                 } catch(Exception e) {
                     LOG.log(Level.SEVERE,"error pdf",e);
                     return Response.status(INTERNAL_SERVER_ERROR).build();
                 }
             } finally {
                 Files.deleteIfExists(path);
-                return Response.status(OK).build();
+
             }
         } catch (IOException ex) {
             LOG.log(Level.SEVERE,"error file",ex);
