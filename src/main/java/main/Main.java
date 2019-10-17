@@ -194,7 +194,7 @@ public class Main {
                     .build();
         }
         LOG.log(Level.INFO, "token" + token);
-        LOG.log(Level.INFO, "contact" + form.getContact().toString());
+        LOG.log(Level.INFO, "form" + form.getContact().toString());
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {

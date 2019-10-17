@@ -6,16 +6,16 @@ public class FormulaireConsent {
 
     private Contact contact;
     private boolean hasAcceptedConsent;
-    private Representant representant;
+    private Representant representant = null;
     private long createTime;
 
     public FormulaireConsent() {
+        this.createTime = Instant.now().getEpochSecond();
     }
 
     public FormulaireConsent(Contact contact, boolean hasAcceptedConsent) {
-        this.contact = contact;
+        this.createTime = Instant.now().getEpochSecond();
         this.hasAcceptedConsent = hasAcceptedConsent;
-        this.representant = null;
         this.createTime = Instant.now().getEpochSecond();
     }
 
@@ -25,7 +25,6 @@ public class FormulaireConsent {
         this.representant = representant;
         this.createTime = Instant.now().getEpochSecond();
     }
-
 
     public Contact getContact() {
         return contact;
