@@ -176,7 +176,6 @@ public class Main {
 
 
     @Path("/send-consent")
-
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response sendGeneralConsent(
@@ -193,8 +192,8 @@ public class Main {
                     .entity(new MessageError("invalid token", "Vous n'avez pas la permission de poster"))
                     .build();
         }
-        LOG.log(Level.INFO, "token" + token);
-        LOG.log(Level.INFO, "form" + form.getContact().toString());
+        LOG.log(Level.INFO, "token :" + token);
+        LOG.log(Level.INFO, "form" + form);
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {
@@ -217,6 +216,19 @@ public class Main {
         }
 
 
+    }
+
+
+    @Path("/formdata")
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response formadata(@FormDataParam("form") FormulaireConsent form) {
+        try {
+            LOG.log(Level.INFO, form.getContact().getNom());
+            return Response.status(OK).build();
+        } catch (Exception e) {
+            return Response.status(INTERNAL_SERVER_ERROR).entity(new MessageError("error",e.getMessage())).build();
+        }
     }
 
 
