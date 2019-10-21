@@ -40,6 +40,8 @@ public class PDFCreator {
 
     private static final DateFormat formatter = new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH);
 
+    private static final DateFormat formatterWithHour = new SimpleDateFormat("dd MMMM yyyy 'à' hh:mm:ss", Locale.FRENCH);
+
     public static void create(Path imagePath, FormulaireConsent formulaireConsent) throws Exception {
         String outputFileName = "/Users/janedoe/Simple.pdf";
         // Create a document and add a page to it
@@ -376,9 +378,15 @@ public class PDFCreator {
             cos.newLineAtOffset(borderRepresentant + 57, ty);
             cos.showText(formulaireConsent.getRepresentant().getRelation());
             cos.endText();
-
-
         }
+
+        ty = rect.getHeight() - 30F * (line+=2);
+        cos.beginText();
+        cos.setFont(fontItalic, 12);
+        cos.newLineAtOffset(border, ty);
+        final String dateCreation = formatterWithHour.format(Date.from(Instant.now()));
+        cos.showText("Crée le " + dateCreation);
+        cos.endText();
 
         // Checkbox
         PDAcroForm acroForm = new PDAcroForm(document);
@@ -507,10 +515,12 @@ public class PDFCreator {
         page1.getAnnotations().add(widgetY);
         widgetN.setAppearanceCharacteristics(acd);
         page1.getAnnotations().add(widgetN);
+        checkBoxY.setValue("Yes");
+        checkBoxN.setValue("Yes");
         if (formulaireConsent.isHasAcceptedConsent()) {
-            checkBoxY.setValue("Yes");
+            checkBoxN.unCheck();
         } else {
-            checkBoxY.setValue("Yes");
+            checkBoxY.unCheck();
         }
         acroForm.getFields().add(checkBoxY);
         document.getDocumentCatalog().setAcroForm(acroForm);
