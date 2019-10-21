@@ -60,9 +60,9 @@ public class SMTP {
         try {
             attachmentContentBytes = Files.readAllBytes(pdfPath);
         } catch (IOException e) {
-            LOG.log(Level.SEVERE,e.getMessage());
+            LOG.log(Level.SEVERE,"error attachement " +  e.getMessage());
         }
-        String attachmentContent = Base64.getMimeEncoder().encodeToString(attachmentContentBytes);
+        String attachmentContent = Base64.getEncoder().encodeToString(attachmentContentBytes);
         attachments.setContent(attachmentContent);
         mail.addAttachments(attachments);
         SendGrid sg = new SendGrid(Utils.getProps(Constant.TWILIO_PROPS, Constant.SENDGRID_API_KEY));

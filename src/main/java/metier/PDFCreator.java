@@ -530,7 +530,6 @@ public class PDFCreator {
 
         //Logo HUG
         final PDImageXObject ximageLogo = PDImageXObject.createFromFile(LOGO_PATH, document);
-        LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
         float w = ximageLogo.getWidth() / 5;
         float h = ximageLogo.getHeight() / 5;
         cos.drawImage(ximageLogo, 50, 30, w, h);
@@ -545,8 +544,10 @@ public class PDFCreator {
         try {
             PDImageXObject ximage = PDImageXObject.createFromFile(imagePath.toString(), document);
             float scale = 700F / ximage.getWidth();
+            LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
             w = ximage.getWidth() * scale;
             h = ximage.getHeight() * scale;
+            LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
             float x_pos = page2.getCropBox().getWidth();
             float y_pos = page2.getCropBox().getHeight();
             float x_adjusted = (x_pos - h) / 2;
