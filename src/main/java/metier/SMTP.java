@@ -53,7 +53,7 @@ public class SMTP {
         Content content = new Content(TEXT_PLAIN, "Formulaire de consentement envoye depuis l'application");
         Mail mail = new Mail(from, subject, to, content);
         Attachments attachments = new Attachments();
-        attachments.setFilename(pdfPath.getFileName().toString());
+        attachments.setFilename("form_econsent.pdf");
         attachments.setType("application/pdf");
         attachments.setDisposition("attachment");
         byte[] attachmentContentBytes = new byte[0];

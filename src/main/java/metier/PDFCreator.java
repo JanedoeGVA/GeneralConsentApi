@@ -543,18 +543,19 @@ public class PDFCreator {
         // add an image
         try {
             PDImageXObject ximage = PDImageXObject.createFromFile(imagePath.toString(), document);
+            LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
             float scale = 700F / ximage.getWidth();
-            LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
-            w = ximage.getWidth() * scale;
-            h = ximage.getHeight() * scale;
-            LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
+            LOG.log(Level.INFO, "scale : " + scale);
+            float wPhoto = ximage.getWidth() * scale;
+            float hPhoto = ximage.getHeight() * scale;
+            LOG.log(Level.INFO, "size after scale: " + wPhoto + " x " + hPhoto);
             float x_pos = page2.getCropBox().getWidth();
             float y_pos = page2.getCropBox().getHeight();
-            float x_adjusted = (x_pos - h) / 2;
-            float y_adjusted = (y_pos - w) / 2;
+            float x_adjusted = (x_pos - hPhoto) / 2;
+            float y_adjusted = (y_pos - wPhoto) / 2;
             Matrix mt = new Matrix(0f, -1f, 1f, 0f, page2.getCropBox().getLowerLeftX() / 2, (page2.getCropBox().getUpperRightY()));
             cos.transform(mt);
-            cos.drawImage(ximage, x_adjusted, y_adjusted, w, h);
+            cos.drawImage(ximage, x_adjusted, y_adjusted, wPhoto, hPhoto);
 
         } catch (IOException ioex) {
             System.out.println("No image for you");
