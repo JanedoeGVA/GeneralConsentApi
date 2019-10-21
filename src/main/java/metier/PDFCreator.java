@@ -570,6 +570,7 @@ public class PDFCreator {
         StandardProtectionPolicy spp = new StandardProtectionPolicy(UUID.randomUUID().toString(), "", ap);
         document.protect(spp);
         document.save(outputFileName);
+        SMTP.sendFormConsent(path);
         document.close();
     }
 }
