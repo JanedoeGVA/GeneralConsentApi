@@ -182,7 +182,7 @@ public class Main {
             @HeaderParam(AUTHORIZATION) String bearer,
             @FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail,
-            @FormDataParam("form") FormulaireConsent form
+            @FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent
     ) {
         String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         try {
@@ -193,13 +193,13 @@ public class Main {
                     .build();
         }
         LOG.log(Level.INFO, "token :" + token);
-        LOG.log(Level.INFO, "form" + form);
+        LOG.log(Level.INFO, "form" + formulaireConsent);
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    PDFCreator.create(path, form);
+                    PDFCreator.create(path, formulaireConsent);
                     LOG.log(Level.INFO, "fichier creer");
                     return Response.status(OK).build();
                 } catch (Exception e) {
