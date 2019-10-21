@@ -543,7 +543,7 @@ public class PDFCreator {
         // add an image
         try {
             PDImageXObject ximage = PDImageXObject.createFromFile(imagePath.toString(), document);
-            LOG.log(Level.INFO, "size : " + ximageLogo.getWidth() + " x " + ximageLogo.getHeight());
+            LOG.log(Level.INFO, "size : " + ximage.getWidth() + " x " + ximage.getHeight());
             float scale = 700F / ximage.getWidth();
             LOG.log(Level.INFO, "scale : " + scale);
             float wPhoto = ximage.getWidth() * scale;
