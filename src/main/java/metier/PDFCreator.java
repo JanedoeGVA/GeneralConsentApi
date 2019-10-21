@@ -569,8 +569,8 @@ public class PDFCreator {
                 LOG.log(Level.INFO, "size after scale: " + wPhoto + " x " + hPhoto);
                 float x_adjusted = (x_pos - wPhoto) / 2;
                 float y_adjusted = (y_pos - hPhoto) / 2;
-                Matrix mt = new Matrix(0f, -1f, 1f, 0f, page2.getCropBox().getLowerLeftX() / 2, (page2.getCropBox().getUpperRightY()));
-                cos.transform(mt);
+//                Matrix mt = new Matrix(0f, 0f, 0f, 0f, page2.getCropBox().getLowerLeftX() / 2, (page2.getCropBox().getUpperRightY()));
+//                cos.transform(mt);
                 cos.drawImage(ximage, x_adjusted, y_adjusted, wPhoto, hPhoto);
             }
 
