@@ -7,7 +7,7 @@ public class FormulaireConsent {
     private Contact contact;
     private boolean hasAcceptedConsent;
     private Representant representant = null;
-    private long createTime;
+    private long createTime= 0;
 
     public FormulaireConsent() {
         this.createTime = Instant.now().getEpochSecond();

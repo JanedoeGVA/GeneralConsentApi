@@ -222,9 +222,9 @@ public class Main {
     @Path("/formdata")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response formadata(@FormDataParam("form") FormulaireConsent form) {
+    public Response formadata(@FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent) {
         try {
-            LOG.log(Level.INFO, form.getContact().getNom());
+            LOG.log(Level.INFO, "test form :" + formulaireConsent.getContact().getNom());
             return Response.status(OK).build();
         } catch (Exception e) {
             return Response.status(INTERNAL_SERVER_ERROR).entity(new MessageError("error",e.getMessage())).build();
