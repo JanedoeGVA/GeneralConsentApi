@@ -227,6 +227,7 @@ public class Main {
             LOG.log(Level.INFO, "test form :" + formulaireConsent.getContact().getNom());
             return Response.status(OK).build();
         } catch (Exception e) {
+            LOG.log(Level.SEVERE, "error");
             return Response.status(INTERNAL_SERVER_ERROR).entity(new MessageError("error",e.getMessage())).build();
         }
     }
