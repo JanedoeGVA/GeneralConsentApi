@@ -544,18 +544,36 @@ public class PDFCreator {
         try {
             PDImageXObject ximage = PDImageXObject.createFromFile(imagePath.toString(), document);
             LOG.log(Level.INFO, "size : " + ximage.getWidth() + " x " + ximage.getHeight());
-            float scale = 700F / ximage.getWidth();
-            LOG.log(Level.INFO, "scale : " + scale);
-            float wPhoto = ximage.getWidth() * scale;
-            float hPhoto = ximage.getHeight() * scale;
-            LOG.log(Level.INFO, "size after scale: " + wPhoto + " x " + hPhoto);
+            final float heightMax = 700f;
             float x_pos = page2.getCropBox().getWidth();
             float y_pos = page2.getCropBox().getHeight();
-            float x_adjusted = (x_pos - hPhoto) / 2;
-            float y_adjusted = (y_pos - wPhoto) / 2;
-            Matrix mt = new Matrix(0f, -1f, 1f, 0f, page2.getCropBox().getLowerLeftX() / 2, (page2.getCropBox().getUpperRightY()));
-            cos.transform(mt);
-            cos.drawImage(ximage, x_adjusted, y_adjusted, wPhoto, hPhoto);
+            //image est a l'envers il faut la retourner
+            if (ximage.getWidth()> ximage.getHeight()) {
+                LOG.log(Level.INFO, "image a l'envers");
+                float scale = heightMax / ximage.getWidth();
+                LOG.log(Level.INFO, "scale : " + scale);
+                float wPhoto = ximage.getWidth() * scale;
+                float hPhoto = ximage.getHeight() * scale;
+                LOG.log(Level.INFO, "size after scale: " + wPhoto + " x " + hPhoto);
+                float x_adjusted = (x_pos - hPhoto) / 2;
+                float y_adjusted = (y_pos - wPhoto) / 2;
+                Matrix mt = new Matrix(0f, -1f, 1f, 0f, page2.getCropBox().getLowerLeftX() / 2, (page2.getCropBox().getUpperRightY()));
+                cos.transform(mt);
+                cos.drawImage(ximage, x_adjusted, y_adjusted, wPhoto, hPhoto);
+            } else {
+                LOG.log(Level.INFO, "image a l'endroit");
+                float scale = 700F / ximage.getHeight();
+                LOG.log(Level.INFO, "scale : " + scale);
+                float wPhoto = ximage.getWidth() * scale;
+                float hPhoto = ximage.getHeight() * scale;
+                LOG.log(Level.INFO, "size after scale: " + wPhoto + " x " + hPhoto);
+                float x_adjusted = (x_pos - wPhoto) / 2;
+                float y_adjusted = (y_pos - hPhoto) / 2;
+                Matrix mt = new Matrix(0f, -1f, 1f, 0f, page2.getCropBox().getLowerLeftX() / 2, (page2.getCropBox().getUpperRightY()));
+                cos.transform(mt);
+                cos.drawImage(ximage, x_adjusted, y_adjusted, wPhoto, hPhoto);
+            }
+
 
         } catch (IOException ioex) {
             System.out.println("No image for you");
