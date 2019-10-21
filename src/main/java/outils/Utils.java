@@ -104,12 +104,12 @@ public class Utils {
         return key;
     }
 
-    public static String generateJWSToken (String contact,String code) {
+    public static String generateJWSToken (int id) {
         final Date exp = Date.from(Instant.now().plus(EXPIRE_IN_MINUTES, ChronoUnit.MINUTES));
         final Date now = Date.from(Instant.now());
-        final String jws = Jwts.builder().setSubject(contact).setIssuedAt(now).setExpiration(exp).signWith(SignatureAlgorithm.RS256, getKeystore()).claim(PAYLOAD_CODE, code).compact();
+        final String jws = Jwts.builder().setSubject(""+id).setIssuedAt(now).setExpiration(exp).signWith(SignatureAlgorithm.RS256, getKeystore()).compact();
         try {
-            DB.unPendingCode(contact,code);
+            DB.unPendingCode(id);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -59,8 +59,9 @@ public class Main {
         LOG.log(Level.INFO, "contact" + contact);
         LOG.log(Level.INFO, "code" + code);
         try {
-            if (DB.valideCode(contact, code)) {
-                final String jws = Utils.generateJWSToken(contact, code);
+            final int id = DB.valideCode(contact, code);
+            if (id != -1) {
+                final String jws = Utils.generateJWSToken(id);
                 TokenJWT tokenJWT = new TokenJWT(jws);
                 return Response.status(OK)
                         .entity(tokenJWT)

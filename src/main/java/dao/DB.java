@@ -13,8 +13,8 @@ public class DB {
     private static final String TBL_CODE_CHALENGE = "tbl_code_chalenge";
     private static final String SQL_INSERT_CHALLENGE = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
     private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time > ?";
-    private static final String SQL_CHALLENGE_VALID = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and code = ? and pending = true and time > ?";
-    private static final String SQL_UPDATE_PENDING = "UPDATE tbl_code_chalenge SET pending = ? WHERE contact = ? AND code = ?";
+    private static final String SQL_CHALLENGE_VALID = "SELECT id FROM tbl_code_chalenge WHERE contact = ? and code = ? and pending = true and time > ?";
+    private static final String SQL_UPDATE_PENDING = "UPDATE tbl_code_chalenge SET pending = ? WHERE id = ?";
 
 
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
@@ -75,7 +75,7 @@ public class DB {
         connection.close();
     }
 
-    public static boolean valideCode(String contact,String code) throws Exception {
+    public static int valideCode(String contact,String code) throws Exception {
         LOG.log(Level.INFO,"contact" +contact);
         LOG.log(Level.INFO,"code" + code);
         long expire = Utils.getExpireEpochSecond();
@@ -88,27 +88,27 @@ public class DB {
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
             LOG.log(Level.INFO,"Existe");
+            int id = resultSet.getInt("id");
             statement.close();
             resultSet.close();
             connection.close();
-            return true;
+            return id;
         } else {
             LOG.log(Level.INFO,"existe pas ou plus valide");
             statement.close();
             resultSet.close();
             connection.close();
-            return false;
+            return -1;
         }
 
 
     }
 
-    public static void unPendingCode(String contact,String code) throws Exception {
+    public static void unPendingCode(int id) throws Exception {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PENDING);
         statement.setBoolean(1, false);
-        statement.setString(2, contact);
-        statement.setString(3, code);
+        statement.setInt(2, id);
         int row = statement.executeUpdate();
         LOG.log(Level.INFO,"Nombres de lignes mis a jour : " + row);
         statement.close();
