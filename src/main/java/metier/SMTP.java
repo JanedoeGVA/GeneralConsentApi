@@ -50,7 +50,7 @@ public class SMTP {
         final Email from = new Email(Utils.getProps(Constant.TWILIO_PROPS, Constant.EMAIL_FROM));
         final Email to = new Email("xavier.costa@unige.ch");
         final String subject = EMAIL_SUBJECT_FORM;
-        Content content = new Content(TEXT_PLAIN, "");
+        Content content = new Content(TEXT_PLAIN, "Formulaire de consentement envoye depuis l'application");
         Mail mail = new Mail(from, subject, to, content);
         Attachments attachments = new Attachments();
         attachments.setFilename(pdfPath.getFileName().toString());
