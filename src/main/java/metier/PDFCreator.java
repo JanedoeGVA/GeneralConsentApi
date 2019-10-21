@@ -4,6 +4,7 @@ package metier;
 import java.awt.Color;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,7 +44,8 @@ public class PDFCreator {
     private static final DateFormat formatterWithHour = new SimpleDateFormat("dd MMMM yyyy 'à' hh:mm:ss", Locale.FRENCH);
 
     public static void create(Path imagePath, FormulaireConsent formulaireConsent) throws Exception {
-        String outputFileName = "/Users/janedoe/Simple.pdf";
+        final java.nio.file.Path path = Files.createTempFile("temp_pdf", ".pdf");
+        String outputFileName = path.toString();
         // Create a document and add a page to it
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);

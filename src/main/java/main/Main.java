@@ -179,11 +179,13 @@ public class Main {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response sendGeneralConsent(
+            @QueryParam("orientation") int orientation,
             @HeaderParam(AUTHORIZATION) String bearer,
             @FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent
     ) {
+        LOG.log(Level.INFO,"photo orientation : " + orientation);
         String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         try {
             Utils.valideJWSToken(token);
@@ -219,18 +221,18 @@ public class Main {
     }
 
 
-    @Path("/formdata")
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    public Response formadata(@FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent) {
-        try {
-            LOG.log(Level.INFO, "test form :" + formulaireConsent.getContact().getNom());
-            return Response.status(OK).build();
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, "error");
-            return Response.status(INTERNAL_SERVER_ERROR).entity(new MessageError("error",e.getMessage())).build();
-        }
-    }
+//    @Path("/formdata")
+//    @POST
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+//    public Response formadata(@@FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent) {
+//        try {
+//            LOG.log(Level.INFO, "test form :" + formulaireConsent.getContact().getNom());
+//            return Response.status(OK).build();
+//        } catch (Exception e) {
+//            LOG.log(Level.SEVERE, "error");
+//            return Response.status(INTERNAL_SERVER_ERROR).entity(new MessageError("error",e.getMessage())).build();
+//        }
+//    }
 
 
 }
