@@ -50,14 +50,13 @@ public class SMTP {
         final Email from = new Email(Utils.getProps(Constant.TWILIO_PROPS, Constant.EMAIL_FROM));
         final Email to = new Email("xavier.costa@unige.ch");
         final String subject = EMAIL_SUBJECT_FORM;
-
         Content content = new Content(TEXT_PLAIN, "Formulaire de consentement envoye depuis l'application");
         Mail mail = new Mail(from, subject, to, content);
-        if (copyToMail != null) {
-            Personalization personalization = new Personalization();
-            personalization.addBcc(new Email(copyToMail));
-            mail.addPersonalization(personalization);
-        }
+//        if (copyToMail != null) {
+//            Personalization personalization = new Personalization();
+//            personalization.addBcc(new Email(copyToMail));
+//            mail.addPersonalization(personalization);
+//        }
         Attachments attachments = new Attachments();
         attachments.setFilename("form_econsent.pdf");
         attachments.setType("application/pdf");
