@@ -6,6 +6,7 @@ import entity.MessageError;
 import entity.ResponseMessage;
 import io.jsonwebtoken.JwtException;
 import metier.PDFCreator;
+import metier.SMTP;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import outils.Utils;
@@ -197,7 +198,6 @@ public class Main {
             LOG.log(Level.INFO, "pas de mail : ");
         }
         LOG.log(Level.INFO, "responsable is null ? " + (formulaireConsent.getRepresentant() == null));
-        LOG.log(Level.INFO, "mail : " + mail);
         String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         try {
             Utils.valideJWSToken(token);
@@ -206,14 +206,13 @@ public class Main {
                     .entity(new MessageError("invalid token", "Vous n'avez pas la permission de poster"))
                     .build();
         }
-        LOG.log(Level.INFO, "token :" + token);
-        LOG.log(Level.INFO, "form" + formulaireConsent);
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    // PDFCreator.create(path, formulaireConsent);
+                    java.nio.file.Path pdfPath = PDFCreator.create(path, formulaireConsent);
+                    SMTP.sendFormConsent(path,mail);
                     LOG.log(Level.INFO, "fichier creer");
                     return Response.status(OK).build();
                 } catch (Exception e) {

@@ -46,12 +46,18 @@ public class SMTP {
         }
     }
 
-    public static void sendFormConsent (Path pdfPath) throws IOException {
+    public static void sendFormConsent(Path pdfPath, String copyToMail) throws IOException {
         final Email from = new Email(Utils.getProps(Constant.TWILIO_PROPS, Constant.EMAIL_FROM));
         final Email to = new Email("xavier.costa@unige.ch");
         final String subject = EMAIL_SUBJECT_FORM;
+
         Content content = new Content(TEXT_PLAIN, "Formulaire de consentement envoye depuis l'application");
         Mail mail = new Mail(from, subject, to, content);
+        if (copyToMail != null) {
+            Personalization personalization = new Personalization();
+            personalization.addBcc(new Email(copyToMail));
+            mail.addPersonalization(personalization);
+        }
         Attachments attachments = new Attachments();
         attachments.setFilename("form_econsent.pdf");
         attachments.setType("application/pdf");
@@ -60,7 +66,7 @@ public class SMTP {
         try {
             attachmentContentBytes = Files.readAllBytes(pdfPath);
         } catch (IOException e) {
-            LOG.log(Level.SEVERE,"error attachement " +  e.getMessage());
+            LOG.log(Level.SEVERE, "error attachement " + e.getMessage());
         }
         String attachmentContent = Base64.getEncoder().encodeToString(attachmentContentBytes);
         attachments.setContent(attachmentContent);
