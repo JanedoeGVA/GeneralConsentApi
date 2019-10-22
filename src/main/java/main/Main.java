@@ -142,18 +142,20 @@ public class Main {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendMail(@QueryParam("email") String email) {
-        LOG.log(Level.INFO, "send email");
-        if (!Utils.validateMail(email)) {
+        final String mail = email.toLowerCase();
+        LOG.log(Level.INFO, "send email at : " + mail);
+        if (!Utils.validateMail(mail)) {
+            LOG.log(Level.INFO, "invalid mail" );
             return Response.status(BAD_REQUEST)
                     .entity(new MessageError("invalid mail", "Le mail ne correspond pas à une adresse correct"))
                     .build();
         }
         try {
-            if (!DB.checkContactExist(email)) {
-                ChallengeCode challengeCode = generateChallengeCode(email);
+            if (!DB.checkContactExist(mail)) {
+                LOG.log(Level.INFO, "mail existe pas" );
+                ChallengeCode challengeCode = generateChallengeCode(mail);
                 // SMTP.sendMail(email,challengeCode.getCode());
-                return Response.status(OK)
-                        .entity(challengeCode)
+                return Response.status(NO_CONTENT)
                         .build();
             } else {
                 return Response.status(BAD_REQUEST)
