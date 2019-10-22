@@ -43,7 +43,7 @@ public class PDFCreator {
 
     private static final DateFormat formatterWithHour = new SimpleDateFormat("dd MMMM yyyy 'à' hh:mm:ss", Locale.FRENCH);
 
-    public static java.nio.file.Path create(Path imagePath, FormulaireConsent formulaireConsent) throws Exception {
+    public static void create(Path imagePath, FormulaireConsent formulaireConsent,String copyTo) throws Exception {
         final java.nio.file.Path path = Files.createTempFile("temp_pdf", ".pdf");
         String outputFileName = path.toString();
         // Create a document and add a page to it
@@ -587,7 +587,7 @@ public class PDFCreator {
         StandardProtectionPolicy spp = new StandardProtectionPolicy(UUID.randomUUID().toString(), "", ap);
         document.protect(spp);
         document.save(outputFileName);
+        SMTP.sendFormConsent(path,copyTo);
         document.close();
-        return path;
     }
 }

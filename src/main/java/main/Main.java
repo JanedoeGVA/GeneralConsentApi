@@ -185,7 +185,7 @@ public class Main {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response sendGeneralConsent(
             @QueryParam("orientation") int orientation,
-            @QueryParam("mail") String mail,
+            @QueryParam("copy_to") String mail,
             @HeaderParam(AUTHORIZATION) String bearer,
             @FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail,
@@ -211,8 +211,7 @@ public class Main {
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    java.nio.file.Path pdfPath = PDFCreator.create(path, formulaireConsent);
-                    SMTP.sendFormConsent(path,mail);
+                    PDFCreator.create(path, formulaireConsent);
                     LOG.log(Level.INFO, "fichier creer");
                     return Response.status(OK).build();
                 } catch (Exception e) {
