@@ -146,14 +146,14 @@ public class Main {
 
 
         if (!Utils.validateMail(email)) {
-            LOG.log(Level.INFO, "invalid mail" );
+            LOG.log(Level.INFO, "invalid mail");
             return Response.status(BAD_REQUEST)
                     .entity(new MessageError("invalid mail", "Le mail ne correspond pas à une adresse correct"))
                     .build();
         }
         try {
             if (!DB.checkContactExist(email)) {
-                LOG.log(Level.INFO, "mail existe pas" );
+                LOG.log(Level.INFO, "mail existe pas");
                 ChallengeCode challengeCode = generateChallengeCode(email);
                 // SMTP.sendMail(email,challengeCode.getCode());
                 return Response.status(NO_CONTENT)
@@ -184,12 +184,20 @@ public class Main {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Response sendGeneralConsent(
             @QueryParam("orientation") int orientation,
+            @QueryParam("mail") String mail,
             @HeaderParam(AUTHORIZATION) String bearer,
             @FormDataParam("file") InputStream uploadedInputStream,
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent
     ) {
-        LOG.log(Level.INFO,"photo orientation : " + orientation);
+        LOG.log(Level.INFO, "photo orientation : " + orientation);
+        if (mail != null) {
+            LOG.log(Level.INFO, "mail : " + mail);
+        } else {
+            LOG.log(Level.INFO, "pas de mail : ");
+        }
+        LOG.log(Level.INFO, "responsable is null ? " + (formulaireConsent.getRepresentant() == null));
+        LOG.log(Level.INFO, "mail : " + mail);
         String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         try {
             Utils.valideJWSToken(token);
@@ -205,7 +213,7 @@ public class Main {
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    PDFCreator.create(path, formulaireConsent);
+                    // PDFCreator.create(path, formulaireConsent);
                     LOG.log(Level.INFO, "fichier creer");
                     return Response.status(OK).build();
                 } catch (Exception e) {
