@@ -52,11 +52,11 @@ public class SMTP {
         final String subject = EMAIL_SUBJECT_FORM;
         Content content = new Content(TEXT_PLAIN, "Formulaire de consentement envoye depuis l'application");
         Mail mail = new Mail(from, subject, to, content);
-//        if (copyToMail != null) {
-//            Personalization personalization = new Personalization();
-//            personalization.addBcc(new Email(copyToMail));
-//            mail.addPersonalization(personalization);
-//        }
+        if (copyToMail != null) {
+            Personalization personalization = new Personalization();
+            personalization.addBcc(new Email(copyToMail));
+            mail.addPersonalization(personalization);
+        }
         Attachments attachments = new Attachments();
         attachments.setFilename("form_econsent.pdf");
         attachments.setType("application/pdf");
