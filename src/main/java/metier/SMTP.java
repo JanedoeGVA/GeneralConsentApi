@@ -53,9 +53,8 @@ public class SMTP {
         Content content = new Content(TEXT_PLAIN, "Formulaire de consentement envoye depuis l'application");
         Mail mail = new Mail(from, subject, to, content);
         if (copyToMail != null) {
-            Personalization personalization = new Personalization();
-            personalization.addBcc(new Email(copyToMail));
-            mail.addPersonalization(personalization);
+            Email bcc = new Email(copyToMail);
+            mail.getPersonalization().get(0).addBcc(bcc);
         }
         Attachments attachments = new Attachments();
         attachments.setFilename("form_econsent.pdf");
