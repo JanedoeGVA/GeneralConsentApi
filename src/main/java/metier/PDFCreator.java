@@ -41,7 +41,7 @@ public class PDFCreator {
 
     private static final DateFormat formatter = new SimpleDateFormat("dd MMMM yyyy", Locale.FRENCH);
 
-    private static final DateFormat formatterWithHour = new SimpleDateFormat("dd MMMM yyyy 'à' hh:mm:ss", Locale.FRENCH);
+    private static final DateFormat formatterWithHour = new SimpleDateFormat("dd MMMM yyyy 'à' HH:mm:ss", Locale.FRENCH);
 
     public static void create(Path imagePath, FormulaireConsent formulaireConsent,String copyTo) throws Exception {
         final java.nio.file.Path path = Files.createTempFile("temp_pdf", ".pdf");
