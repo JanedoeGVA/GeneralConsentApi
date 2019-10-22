@@ -117,8 +117,8 @@ public class Utils {
         return jws;
     }
 
-    public static void valideJWSToken (String jwtToken) throws JwtException {
-        Jwts.parser().setSigningKey(getKeystore()).parseClaimsJws(jwtToken);
+    public static String getSubjectJWSToken (String jwtToken) throws JwtException {
+        return Jwts.parser().setSigningKey(getKeystore()).parseClaimsJws(jwtToken).getBody().getSubject();
     }
 
 }

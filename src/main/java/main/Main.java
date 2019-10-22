@@ -26,6 +26,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
+import static javax.ws.rs.core.HttpHeaders.DATE;
 import static javax.ws.rs.core.Response.Status.*;
 
 
@@ -199,19 +200,29 @@ public class Main {
         }
         LOG.log(Level.INFO, "responsable is null ? " + (formulaireConsent.getRepresentant() == null));
         String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
+        int id = -1;
         try {
-            Utils.valideJWSToken(token);
+            id = Integer.valueOf(Utils.getSubjectJWSToken(token));
+            LOG.log(Level.INFO, "id : " + id );
+            if (!DB.valideToken(id)) {
+                return Response.status(UNAUTHORIZED)
+                        .entity(new MessageError("invalid token", "Vous n'avez pas la permission de poster"))
+                        .build();
+            }
         } catch (JwtException e) {
             return Response.status(UNAUTHORIZED)
                     .entity(new MessageError("invalid token", "Vous n'avez pas la permission de poster"))
                     .build();
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "error BDD : " + e.getMessage() );
         }
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             try {
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
                 try {
-                    PDFCreator.create(path, formulaireConsent);
+                    PDFCreator.create(path, formulaireConsent,mail);
+                    DB.unValidToken(id);
                     LOG.log(Level.INFO, "fichier creer");
                     return Response.status(OK).build();
                 } catch (Exception e) {

@@ -14,7 +14,10 @@ public class DB {
     private static final String SQL_INSERT_CHALLENGE = "INSERT INTO " + TBL_CODE_CHALENGE + "(contact, code, time) VALUES (?,?,?)";
     private static final String SQL_CHALLENGE_EXIST = "SELECT * FROM tbl_code_chalenge WHERE contact = ? and time > ?";
     private static final String SQL_CHALLENGE_VALID = "SELECT id FROM tbl_code_chalenge WHERE contact = ? and code = ? and pending = true and time > ?";
+    private static final String SQL_TOKEN_VALID = "SELECT id FROM tbl_code_chalenge WHERE id = ? and valide = true";
     private static final String SQL_UPDATE_PENDING = "UPDATE tbl_code_chalenge SET pending = ? WHERE id = ?";
+    private static final String SQL_UPDATE_VALID = "UPDATE tbl_code_chalenge SET valide = ? WHERE id = ?";
+
 
 
     private static final Logger LOG = Logger.getLogger(DB.class.getName());
@@ -104,6 +107,30 @@ public class DB {
 
     }
 
+    public static boolean valideToken(int id) throws Exception {
+        long expire = Utils.getExpireEpochSecond();
+        LOG.log(Level.INFO,"expire" + expire);
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQL_TOKEN_VALID);
+        statement.setInt(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            LOG.log(Level.INFO,"valide");
+            statement.close();
+            resultSet.close();
+            connection.close();
+            return true;
+        } else {
+            LOG.log(Level.INFO,"pas valide");
+            statement.close();
+            resultSet.close();
+            connection.close();
+            return false;
+        }
+
+
+    }
+
     public static void unPendingCode(int id) throws Exception {
         Connection connection = getConnection();
         PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_PENDING);
@@ -114,6 +141,18 @@ public class DB {
         statement.close();
         connection.close();
     }
+
+    public static void unValidToken(int id) throws Exception {
+        Connection connection = getConnection();
+        PreparedStatement statement = connection.prepareStatement(SQL_UPDATE_VALID);
+        statement.setBoolean(1, false);
+        statement.setInt(2, id);
+        int row = statement.executeUpdate();
+        LOG.log(Level.INFO,"Nombres de lignes mis a jour : " + row);
+        statement.close();
+        connection.close();
+    }
+
 
 
 
