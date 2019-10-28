@@ -7,6 +7,7 @@ import entity.ResponseMessage;
 import io.jsonwebtoken.JwtException;
 import metier.PDFCreator;
 import metier.SMTP;
+import metier.ShortMessageService;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import outils.Utils;
@@ -121,7 +122,7 @@ public class Main {
         try {
             if (!DB.checkContactExist(phone)) {
                 ChallengeCode challengeCode = generateChallengeCode(phone);
-                //ShortMessageService.send(phone, challengeCode.getCode());
+                ShortMessageService.send(phone, challengeCode.getCode());
                 return Response.status(NO_CONTENT)
                         .build();
             } else {
@@ -157,7 +158,7 @@ public class Main {
             if (!DB.checkContactExist(email)) {
                 LOG.log(Level.INFO, "mail existe pas");
                 ChallengeCode challengeCode = generateChallengeCode(email);
-                // SMTP.sendMail(email,challengeCode.getCode());
+                SMTP.sendMail(email,challengeCode.getCode());
                 return Response.status(NO_CONTENT)
                         .build();
             } else {
