@@ -19,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,6 +38,7 @@ public class Main {
 
 
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
+    private static ExecutorService executor = Executors.newFixedThreadPool(10);
 
     @Path("/test")
     @GET
@@ -90,7 +93,6 @@ public class Main {
         LOG.log(Level.INFO, "check phone");
         LOG.log(Level.INFO, "phone : " + phone);
         final String match = (Utils.validatePhone(phone)) ? "le numero correspond a un numero de natel" : "le numero ne correspond pas";
-
         return Response.status(OK)
                 .entity(new ResponseMessage(match))
                 .build();
@@ -219,21 +221,24 @@ public class Main {
         }
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
-            try {
+            final int foundId = id;
                 Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
-                try {
-                    PDFCreator.create(path, formulaireConsent,mail);
-                    DB.unValidToken(id);
-                    LOG.log(Level.INFO, "fichier creer");
-                    return Response.status(OK).build();
-                } catch (Exception e) {
-                    LOG.log(Level.SEVERE, "error pdf", e);
-                    return Response.status(INTERNAL_SERVER_ERROR).build();
-                }
-            } finally {
-                Files.deleteIfExists(path);
-
-            }
+                executor.execute(() -> {
+                    try {
+                        PDFCreator.create(path, formulaireConsent, mail);
+                        DB.unValidToken(foundId);
+                        LOG.log(Level.INFO, "fichier creer");
+                    } catch (Exception e) {
+                        LOG.log(Level.SEVERE, "error pdf", e);
+                    } finally {
+                        try {
+                            Files.deleteIfExists(path);
+                        } catch (IOException ex) {
+                            LOG.log(Level.SEVERE, "error delete file", ex);
+                        }
+                    }
+                });
+                return Response.status(ACCEPTED).build();
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "error file", ex);
             return Response.status(INTERNAL_SERVER_ERROR).build();
