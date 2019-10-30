@@ -54,12 +54,6 @@ public class Main {
         UriBuilder builder = UriBuilder.fromPath(template);
         // Use .buildFromMap()
         URI output = builder.buildFromMap(parameters);
-        try {
-            SMTP.testSendMail("xavier.costa@hesge.ch");
-            LOG.log(Level.INFO, "mail sent");
-        } catch (MessagingException e) {
-            LOG.log(Level.INFO, "error send mail",e);
-        }
         return output.toString();
     }
 

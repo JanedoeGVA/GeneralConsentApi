@@ -96,7 +96,7 @@ public class SMTP {
 //
 //    }
 
-    public static void testSendMail(Path pdfPath,String copyToMail) throws MessagingException, IOException {
+    public static void sendFormConsent(Path pdfPath,String copyToMail) throws MessagingException, IOException {
         Properties prop = new Properties();
         try (InputStream input = new FileInputStream(SMTP_PROPS)) {
             prop.load(input);
@@ -109,6 +109,7 @@ public class SMTP {
                 return new PasswordAuthentication(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL), Utils.getProps(Constant.UNIGE_PROPS, Constant.MAIL_PASS));
             }
         });
+        // Session session = Session.getInstance(prop,null);
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         if (copyToMail == null) {
