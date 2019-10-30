@@ -58,7 +58,7 @@ public class Main {
             SMTP.testSendMail();
             LOG.log(Level.INFO, "mail sent");
         } catch (MessagingException e) {
-            LOG.log(Level.INFO, "error send mail",e.getMessage());
+            LOG.log(Level.INFO, "error send mail",e);
         }
         return output.toString();
     }
