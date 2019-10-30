@@ -55,7 +55,7 @@ public class Main {
         // Use .buildFromMap()
         URI output = builder.buildFromMap(parameters);
         try {
-            SMTP.testSendMail("xavier.costa@hesge.ch","xavier.costa1227@gmail.com","xou.oloc@gmail.com");
+            SMTP.testSendMail("xavier.costa@hesge.ch");
             LOG.log(Level.INFO, "mail sent");
         } catch (MessagingException e) {
             LOG.log(Level.INFO, "error send mail",e);

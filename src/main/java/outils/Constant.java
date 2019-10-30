@@ -16,8 +16,10 @@ public class Constant {
 
 
     public static final String UNIGE_PROPS = "unige.properties";
-    public static final String UNIGE_MAIL = "mail";
-    public static final String UNIGE_PASS = "pass";
+    public static final String FROM_MAIL = "mail_from";
+    public static final String CONSENTEMENT_MAIL = "mail_consentement";
+    public static final String MAIL_PASS = "pass";
+
 
 
     // TODO: A mettre dans var environment du docker
