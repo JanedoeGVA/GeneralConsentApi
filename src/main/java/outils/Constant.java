@@ -15,6 +15,10 @@ public class Constant {
     public static final String DB_PASS = "db_pass";
 
 
+    public static final String UNIGE_PROPS = "unige.properties";
+    public static final String UNIGE_MAIL = "mail";
+    public static final String UNIGE_PASS = "pass";
+
 
     // TODO: A mettre dans var environment du docker
     public static final String SMS_BODY = "Votre code est : %s";

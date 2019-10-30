@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
+import javax.mail.MessagingException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -53,6 +54,12 @@ public class Main {
         UriBuilder builder = UriBuilder.fromPath(template);
         // Use .buildFromMap()
         URI output = builder.buildFromMap(parameters);
+        try {
+            SMTP.testSendMail();
+            LOG.log(Level.INFO, "mail sent");
+        } catch (MessagingException e) {
+            LOG.log(Level.INFO, "error send mail",e.getMessage());
+        }
         return output.toString();
     }
 

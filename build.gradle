@@ -72,5 +72,8 @@ dependencies {
                 'io.jsonwebtoken:jjwt-jackson:0.10.7'
     }
 
+    // https://mvnrepository.com/artifact/javax.mail/javax.mail-api
+    compile group: 'javax.mail', name: 'javax.mail-api', version: '1.6.2'
+
     project.webAppDirName = 'WebContent'
 }
