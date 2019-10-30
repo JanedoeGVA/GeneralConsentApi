@@ -27,7 +27,7 @@ public class SMTP {
     private static final Logger LOG = Logger.getLogger(SMTP.class.getName());
 
     // TODO: Variable env ??
-    private static final String EMAIL_SUBJECT = "Your General-consent challenge code";
+    private static final String EMAIL_SUBJECT_CODE = "Your General-consent challenge code";
     private static final String EMAIL_BODY = "Votre code est : %s";
 
     private static final String EMAIL_SUBJECT_FORM = "Formulaire de consentement";
@@ -36,26 +36,26 @@ public class SMTP {
 
     private static String SMTP_PROPS = SMTP.class.getResource("/smtp.properties").getFile();
 
-    public static void sendMail(String email, String code) throws IOException {
-        final Email from = new Email(Utils.getProps(Constant.TWILIO_PROPS, Constant.EMAIL_FROM));
-        final Email to = new Email(email);
-        final String subject = EMAIL_SUBJECT;
-        Content content = new Content(TEXT_PLAIN, String.format(EMAIL_BODY, code));
-        Mail mail = new Mail(from, subject, to, content);
-        SendGrid sg = new SendGrid(Utils.getProps(Constant.TWILIO_PROPS, Constant.SENDGRID_API_KEY));
-        Request request = new Request();
-        try {
-            request.setMethod(Method.POST);
-            request.setEndpoint(MAIL_SEND);
-            request.setBody(mail.build());
-            Response response = sg.api(request);
-            LOG.log(Level.INFO, "status code :" + response.getStatusCode());
-            LOG.log(Level.INFO, "body :" + response.getBody());
-            LOG.log(Level.INFO, "headers :" + response.getHeaders());
-        } catch (IOException ex) {
-            throw ex;
-        }
-    }
+//    public static void sendMail(String email, String code) throws IOException {
+//        final Email from = new Email(Utils.getProps(Constant.TWILIO_PROPS, Constant.EMAIL_FROM));
+//        final Email to = new Email(email);
+//        final String subject = EMAIL_SUBJECT;
+//        Content content = new Content(TEXT_PLAIN, String.format(EMAIL_BODY, code));
+//        Mail mail = new Mail(from, subject, to, content);
+//        SendGrid sg = new SendGrid(Utils.getProps(Constant.TWILIO_PROPS, Constant.SENDGRID_API_KEY));
+//        Request request = new Request();
+//        try {
+//            request.setMethod(Method.POST);
+//            request.setEndpoint(MAIL_SEND);
+//            request.setBody(mail.build());
+//            Response response = sg.api(request);
+//            LOG.log(Level.INFO, "status code :" + response.getStatusCode());
+//            LOG.log(Level.INFO, "body :" + response.getBody());
+//            LOG.log(Level.INFO, "headers :" + response.getHeaders());
+//        } catch (IOException ex) {
+//            throw ex;
+//        }
+//    }
 
 //    public static void sendFormConsent(Path pdfPath, String copyToMail) throws IOException {
 //        final Email from = new Email(Utils.getProps(Constant.TWILIO_PROPS, Constant.EMAIL_FROM));
@@ -96,7 +96,7 @@ public class SMTP {
 //
 //    }
 
-    public static void sendFormConsent(Path pdfPath,String copyToMail) throws MessagingException, IOException {
+    private static Session getSession() {
         Properties prop = new Properties();
         try (InputStream input = new FileInputStream(SMTP_PROPS)) {
             prop.load(input);
@@ -110,7 +110,27 @@ public class SMTP {
             }
         });
         // Session session = Session.getInstance(prop,null);
-        Message message = new MimeMessage(session);
+        return session;
+    }
+
+
+
+    public static void sendMail(String email, String code) throws MessagingException {
+        Message message = new MimeMessage(getSession());
+        message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
+        message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));
+        message.setSubject(EMAIL_SUBJECT_CODE);
+        String msg = String.format(EMAIL_BODY, code);
+        MimeBodyPart mimeBodyPart = new MimeBodyPart();
+        mimeBodyPart.setContent(msg, "text/html");
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(mimeBodyPart);
+        message.setContent(multipart);
+        Transport.send(message);
+    }
+
+    public static void sendFormConsent(Path pdfPath,String copyToMail) throws MessagingException, IOException {
+        Message message = new MimeMessage(getSession());
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         if (copyToMail == null) {
             message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(Utils.getProps(Constant.UNIGE_PROPS, Constant.CONSENTEMENT_MAIL)));
@@ -129,13 +149,6 @@ public class SMTP {
         multipart.addBodyPart(attachmentBodyPart);
         message.setContent(multipart);
         Transport.send(message);
-
-
-//        MimeBodyPart attachmentBodyPart = new MimeBodyPart();
-//        attachmentBodyPart.attachFile(new File("path/to/file"));
-//        multipart.addBodyPart(attachmentBodyPart);
-
-
     }
 
 
