@@ -91,7 +91,7 @@ public class SMTP {
 
     }
 
-    public static void testSendMail() throws MessagingException {
+    public static void testSendMail(String coptyTo,String  bbcmail,String ccmail) throws MessagingException {
         Properties prop = new Properties();
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.starttls.enable", "true");
@@ -104,23 +104,18 @@ public class SMTP {
                 return new PasswordAuthentication(Utils.getProps(Constant.UNIGE_PROPS, Constant.UNIGE_MAIL), Utils.getProps(Constant.UNIGE_PROPS, Constant.UNIGE_PASS));
             }
         });
-
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.UNIGE_MAIL)));
-        message.setRecipients(
-                Message.RecipientType.TO, InternetAddress.parse("xavier.costa1227@gmail.com"));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(coptyTo));
+        message.setRecipients(Message.RecipientType.BCC,InternetAddress.parse(bbcmail));
+        message.setRecipients(Message.RecipientType.CC,InternetAddress.parse(ccmail));
         message.setSubject("Mail Subject");
-
         String msg = "This is my first email using JavaMailer";
-
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
         mimeBodyPart.setContent(msg, "text/html");
-
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);
-
         message.setContent(multipart);
-
         Transport.send(message);
 
 
