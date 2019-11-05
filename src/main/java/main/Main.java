@@ -47,12 +47,10 @@ public class Main {
     public String message() {
         LOG.log(Level.INFO, "Main");
         String template = "http://example.com/{name}/{age}";
-        // UriTemplate uriTemplate = new UriTemplate(template);
         Map<String, String> parameters = new HashMap<>();
         parameters.put("name", "Twilio");
         parameters.put("age", "110");
         UriBuilder builder = UriBuilder.fromPath(template);
-        // Use .buildFromMap()
         Utils.JWSToken();
         URI output = builder.buildFromMap(parameters);
         return output.toString();
