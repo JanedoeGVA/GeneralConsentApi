@@ -117,6 +117,13 @@ public class Utils {
         return jws;
     }
 
+    public static void JWSToken () {
+        final Date exp = Date.from(Instant.now().plus(720000, ChronoUnit.MINUTES));
+        final Date now = Date.from(Instant.now());
+        final String jws = Jwts.builder().setSubject("bearer").setIssuedAt(now).setExpiration(exp).signWith(SignatureAlgorithm.RS256, getKeystore()).compact();
+        LOG.log(Level.INFO, "JWS : " + jws);
+    }
+
     public static String getSubjectJWSToken (String jwtToken) throws JwtException {
         return Jwts.parser().setSigningKey(getKeystore()).parseClaimsJws(jwtToken).getBody().getSubject();
     }

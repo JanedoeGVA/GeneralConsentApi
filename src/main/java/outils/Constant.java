@@ -20,6 +20,9 @@ public class Constant {
     public static final String CONSENTEMENT_MAIL = "mail_consentement";
     public static final String MAIL_PASS = "pass";
 
+    public static final String SWISSCOM_PROPS = "swisscom.properties";
+    public static final String CUSTOMER_KEY = "customer_key";
+
 
 
     // TODO: A mettre dans var environment du docker

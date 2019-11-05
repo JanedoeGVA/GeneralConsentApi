@@ -1,17 +1,46 @@
 package metier;
 
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 import outils.Constant;
 import outils.Utils;
 
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ShortMessageService {
 
-    public static void send (String phoneNumber,String code) {
-        Twilio.init(Utils.getProps(Constant.TWILIO_PROPS,Constant.ACCOUNT_SID),Utils.getProps(Constant.TWILIO_PROPS,Constant.AUTH_TOKEN));
-        Message.creator(new PhoneNumber(phoneNumber),new PhoneNumber(Utils.getProps(Constant.TWILIO_PROPS,Constant.PHONE_NUMBER)),String.format(Constant.SMS_BODY,code)).create();
+    private static final Logger LOG = Logger.getLogger(ShortMessageService.class.getName());
+
+    public static void send (String phoneNumber,String code) throws IOException {
+
+        URL url = new URL("https://api.swisscom.com/messaging/sms");
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        try {
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Accept", "application/json");
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setRequestProperty("client_id", Utils.getProps(Constant.SWISSCOM_PROPS, Constant.CUSTOMER_KEY));
+            con.setRequestProperty("SCS-Version", "2");
+            con.setConnectTimeout(5000);
+            con.setReadTimeout(5000);
+            con.setDoOutput(true);
+            String from = "Consentement-General";
+            String str = "{\"from\": \"" + from + "\",\"to\":\"" + phoneNumber + "\",\"text\":\" Votre code : " + code + "\"}";
+            byte[] outputInBytes = str.getBytes("UTF-8");
+            try (OutputStream os = con.getOutputStream()) {
+                os.write(outputInBytes);
+            }
+            int status = con.getResponseCode();
+            LOG.log(Level.INFO, "code :" + status);
+        } finally {
+            con.disconnect();
+        }
+
     }
+
+
 
 
 

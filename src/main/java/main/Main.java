@@ -53,6 +53,7 @@ public class Main {
         parameters.put("age", "110");
         UriBuilder builder = UriBuilder.fromPath(template);
         // Use .buildFromMap()
+        Utils.JWSToken();
         URI output = builder.buildFromMap(parameters);
         return output.toString();
     }
@@ -114,30 +115,44 @@ public class Main {
     @Path("/send-sms")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendSMS(@QueryParam("phone") String phone) {
+    public Response sendSMS(@QueryParam("phone") String phone, @HeaderParam(AUTHORIZATION) String bearer) {
         LOG.log(Level.INFO, "send SMS");
         LOG.log(Level.INFO, "phone : " + phone);
-        if (!Utils.validatePhone(phone)) {
-            return Response.status(BAD_REQUEST)
-                    .entity(new MessageError("invalid phone", "Le numéro ne correspond pas à un natel"))
-                    .build();
-        }
+        String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         try {
-            if (!DB.checkContactExist(phone)) {
-                ChallengeCode challengeCode = generateChallengeCode(phone);
-                ShortMessageService.send(phone, challengeCode.getCode());
-                return Response.status(NO_CONTENT)
-                        .build();
+            String subject = Utils.getSubjectJWSToken(token);
+            if (subject.compareTo("bearer") == 0) {
+                if (!Utils.validatePhone(phone)) {
+                    return Response.status(BAD_REQUEST)
+                            .entity(new MessageError("invalid phone", "Le numéro ne correspond pas à un natel"))
+                            .build();
+                }
+                try {
+                    if (!DB.checkContactExist(phone)) {
+                        ChallengeCode challengeCode = generateChallengeCode(phone);
+                        ShortMessageService.send(phone, challengeCode.getCode());
+                        return Response.status(NO_CONTENT)
+                                .build();
+                    } else {
+                        LOG.log(Level.INFO, "too many request");
+                        return Response.status(BAD_REQUEST)
+                                .entity(new MessageError("too many request", "vous devez attendre 3 minutes avant de redemander un nouveau code"))
+                                .build();
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, e.getMessage());
+                    return Response.status(INTERNAL_SERVER_ERROR)
+                            .entity(new MessageError("server error", "Un problème est survenu"))
+                            .build();
+                }
             } else {
-                LOG.log(Level.INFO, "too many request");
-                return Response.status(BAD_REQUEST)
-                        .entity(new MessageError("too many request", "vous devez attendre 3 minutes avant de redemander un nouveau code"))
+                return Response.status(UNAUTHORIZED)
+                        .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
                         .build();
             }
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage());
-            return Response.status(INTERNAL_SERVER_ERROR)
-                    .entity(new MessageError("server error", "Un problème est survenu"))
+        } catch (JwtException ex) {
+            return Response.status(UNAUTHORIZED)
+                    .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
                     .build();
         }
 
@@ -147,7 +162,7 @@ public class Main {
     @Path("/send-mail")
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    public Response sendMail(@QueryParam("email") String email) {
+    public Response sendMail(@QueryParam("email") String email, @HeaderParam(AUTHORIZATION) String bearer) {
         LOG.log(Level.INFO, "send email " + email);
 
 
@@ -161,7 +176,7 @@ public class Main {
             if (!DB.checkContactExist(email)) {
                 LOG.log(Level.INFO, "mail existe pas");
                 ChallengeCode challengeCode = generateChallengeCode(email);
-                SMTP.sendMail(email,challengeCode.getCode());
+                SMTP.sendMail(email, challengeCode.getCode());
                 return Response.status(NO_CONTENT)
                         .build();
             } else {
@@ -207,7 +222,7 @@ public class Main {
         int id = -1;
         try {
             id = Integer.valueOf(Utils.getSubjectJWSToken(token));
-            LOG.log(Level.INFO, "id : " + id );
+            LOG.log(Level.INFO, "id : " + id);
             if (!DB.valideToken(id)) {
                 return Response.status(UNAUTHORIZED)
                         .entity(new MessageError("invalid token", "Vous n'avez pas la permission de poster"))
@@ -218,28 +233,28 @@ public class Main {
                     .entity(new MessageError("invalid token", "Vous n'avez pas la permission de poster"))
                     .build();
         } catch (Exception e) {
-            LOG.log(Level.SEVERE, "error BDD : " + e.getMessage() );
+            LOG.log(Level.SEVERE, "error BDD : " + e.getMessage());
         }
         try {
             final java.nio.file.Path path = Files.createTempFile("tempfiles", ".jpg");
             final int foundId = id;
-                Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
-                executor.execute(() -> {
+            Files.copy(uploadedInputStream, path, StandardCopyOption.REPLACE_EXISTING);
+            executor.execute(() -> {
+                try {
+                    PDFCreator.create(path, formulaireConsent, mail);
+                    DB.unValidToken(foundId);
+                    LOG.log(Level.INFO, "fichier creer");
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, "error pdf", e);
+                } finally {
                     try {
-                        PDFCreator.create(path, formulaireConsent, mail);
-                        DB.unValidToken(foundId);
-                        LOG.log(Level.INFO, "fichier creer");
-                    } catch (Exception e) {
-                        LOG.log(Level.SEVERE, "error pdf", e);
-                    } finally {
-                        try {
-                            Files.deleteIfExists(path);
-                        } catch (IOException ex) {
-                            LOG.log(Level.SEVERE, "error delete file", ex);
-                        }
+                        Files.deleteIfExists(path);
+                    } catch (IOException ex) {
+                        LOG.log(Level.SEVERE, "error delete file", ex);
                     }
-                });
-                return Response.status(ACCEPTED).build();
+                }
+            });
+            return Response.status(ACCEPTED).build();
         } catch (IOException ex) {
             LOG.log(Level.SEVERE, "error file", ex);
             return Response.status(INTERNAL_SERVER_ERROR).build();
