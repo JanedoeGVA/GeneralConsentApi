@@ -59,7 +59,7 @@ public class SMTP {
     public static void sendMail(String email, String code) throws MessagingException {
         Message message = new MimeMessage(getSession());
         //message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
-        message.setFrom(new InternetAddress(EMAIL_NO_REPLY));
+        message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));
         message.setSubject(EMAIL_SUBJECT_CODE);
         String msg = String.format(EMAIL_BODY, code);
