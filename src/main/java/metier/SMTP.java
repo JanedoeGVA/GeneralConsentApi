@@ -31,8 +31,6 @@ public class SMTP {
 
     private static final String EMAIL_SUBJECT_FORM = "Formulaire de consentement";
 
-    private static final String MAIL_SEND = "mail/send";
-
     private static String SMTP_PROPS = SMTP.class.getResource("/smtp.properties").getFile();
 
 //
