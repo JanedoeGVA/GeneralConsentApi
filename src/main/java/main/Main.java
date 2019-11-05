@@ -39,20 +39,6 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static ExecutorService executor = Executors.newFixedThreadPool(10);
 
-    @Path("/test")
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public String message() {
-        LOG.log(Level.INFO, "Main");
-        String template = "http://example.com/{name}/{age}";
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("name", "Twilio");
-        parameters.put("age", "110");
-        UriBuilder builder = UriBuilder.fromPath(template);
-        URI output = builder.buildFromMap(parameters);
-        return output.toString();
-    }
-
 
     @Path("/verification")
     @POST
@@ -159,32 +145,45 @@ public class Main {
     @Produces(MediaType.APPLICATION_JSON)
     public Response sendMail(@QueryParam("email") String email, @HeaderParam(AUTHORIZATION) String bearer) {
         LOG.log(Level.INFO, "send email " + email);
-
-
-        if (!Utils.validateMail(email)) {
-            LOG.log(Level.INFO, "invalid mail");
-            return Response.status(BAD_REQUEST)
-                    .entity(new MessageError("invalid mail", "Le mail ne correspond pas à une adresse correct"))
-                    .build();
-        }
+        String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         try {
-            if (!DB.checkContactExist(email)) {
-                LOG.log(Level.INFO, "mail existe pas");
-                ChallengeCode challengeCode = generateChallengeCode(email);
-                SMTP.sendMail(email, challengeCode.getCode());
-                return Response.status(NO_CONTENT)
-                        .build();
+            String subject = Utils.getSubjectJWSToken(token);
+            if (subject.compareTo("bearer") == 0) {
+
+                if (!Utils.validateMail(email)) {
+                    LOG.log(Level.INFO, "invalid mail");
+                    return Response.status(BAD_REQUEST)
+                            .entity(new MessageError("invalid mail", "Le mail ne correspond pas à une adresse correct"))
+                            .build();
+                }
+                try {
+                    if (!DB.checkContactExist(email)) {
+                        LOG.log(Level.INFO, "mail existe pas");
+                        ChallengeCode challengeCode = generateChallengeCode(email);
+                        SMTP.sendMail(email, challengeCode.getCode());
+                        return Response.status(NO_CONTENT)
+                                .build();
+                    } else {
+                        return Response.status(BAD_REQUEST)
+                                .entity(new MessageError("too many request", "Vous devez attendre 3 minutes avant de redemander un nouveau code"))
+                                .build();
+                    }
+                } catch (Exception e) {
+                    LOG.log(Level.SEVERE, e.getMessage());
+                    return Response.status(INTERNAL_SERVER_ERROR)
+                            .entity(new MessageError("server error", "Un problème est survenu"))
+                            .build();
+                }
             } else {
-                return Response.status(BAD_REQUEST)
-                        .entity(new MessageError("too many request", "Vous devez attendre 3 minutes avant de redemander un nouveau code"))
+                    return Response.status(UNAUTHORIZED)
+                            .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
+                            .build();
+                }
+            } catch (JwtException ex) {
+                return Response.status(UNAUTHORIZED)
+                        .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
                         .build();
             }
-        } catch (Exception e) {
-            LOG.log(Level.SEVERE, e.getMessage());
-            return Response.status(INTERNAL_SERVER_ERROR)
-                    .entity(new MessageError("server error", "Un problème est survenu"))
-                    .build();
-        }
     }
 
     private static ChallengeCode generateChallengeCode(String contact) throws Exception {
