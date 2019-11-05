@@ -58,7 +58,6 @@ public class SMTP {
 
     public static void sendMail(String email, String code) throws MessagingException {
         Message message = new MimeMessage(getSession());
-        //message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(email));
         message.setSubject(EMAIL_SUBJECT_CODE);
@@ -73,7 +72,7 @@ public class SMTP {
 
     public static void sendFormConsent(Path pdfPath,String copyToMail) throws MessagingException, IOException {
         Message message = new MimeMessage(getSession());
-        message.setFrom(new InternetAddress(EMAIL_NO_REPLY));
+        message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(Utils.getProps(Constant.UNIGE_PROPS, Constant.CONSENTEMENT_MAIL)));
         message.setSubject(EMAIL_SUBJECT_FORM);
         String msg = "Formulaire de consentement envoye depuis l'application";
