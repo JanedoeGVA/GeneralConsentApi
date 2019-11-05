@@ -24,13 +24,11 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.annotation.Nullable;
-import javax.mail.MessagingException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static javax.ws.rs.core.HttpHeaders.DATE;
+
 import static javax.ws.rs.core.Response.Status.*;
 
 
