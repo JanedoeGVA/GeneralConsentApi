@@ -51,7 +51,6 @@ public class Main {
         parameters.put("name", "Twilio");
         parameters.put("age", "110");
         UriBuilder builder = UriBuilder.fromPath(template);
-        Utils.JWSToken();
         URI output = builder.buildFromMap(parameters);
         return output.toString();
     }
