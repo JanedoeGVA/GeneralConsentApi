@@ -85,12 +85,12 @@ public class SMTP {
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(Utils.getProps(Constant.UNIGE_PROPS, Constant.CONSENTEMENT_MAIL)));
         message.setSubject(EMAIL_SUBJECT_FORM);
-        String msg = "Formulaire de consentement envoye depuis l'application";
+        String msg = "Formulaire de consentement envoye depuis l'application"+ "\r\n";
         if (copyToMail != null) {
-            msg = msg + "\r\n" + "La personne désire une copie à l'adresse suivante : " + copyToMail;
+            msg = msg + "La personne désire une copie à l'adresse suivante : " + copyToMail + "\r\n";
         }
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(msg, "text/html");
+        mimeBodyPart.setContent(msg, "text/plain");
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);
         MimeBodyPart attachmentBodyPart = new MimeBodyPart();
