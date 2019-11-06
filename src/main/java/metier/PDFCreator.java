@@ -547,6 +547,7 @@ public class PDFCreator {
             cos.lineTo(550, 130);
             cos.stroke();
 
+            //photo
             try {
                 PDImageXObject ximage = PDImageXObject.createFromFile(imagePath.toString(), document);
                 LOG.log(Level.INFO, "size : " + ximage.getWidth() + " x " + ximage.getHeight());
@@ -563,6 +564,9 @@ public class PDFCreator {
                 if (ximage.getWidth() > ximage.getHeight()) {
                     LOG.log(Level.INFO, "image landscape");
                     float scale = heightMax / ximage.getHeight();
+                    if (scale*ximage.getWidth()>widthMax) {
+                        scale = widthMax / ximage.getWidth();
+                    }
                     LOG.log(Level.INFO, "scale : " + scale);
                     float wPhoto = ximage.getWidth() * scale;
                     float hPhoto = ximage.getHeight() * scale;
