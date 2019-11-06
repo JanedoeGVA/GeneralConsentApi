@@ -172,8 +172,9 @@ public class Main {
                         return Response.status(NO_CONTENT)
                                 .build();
                     } else {
+                        LOG.log(Level.INFO, "too many request");
                         return Response.status(BAD_REQUEST)
-                                .entity(new MessageError("too many request", "Vous devez attendre 3 minutes avant de redemander un nouveau code"))
+                                .entity(new MessageError("too many request", "vous devez attendre 3 minutes avant de redemander un nouveau code"))
                                 .build();
                     }
                 } catch (Exception e) {
@@ -213,13 +214,6 @@ public class Main {
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @FormDataParam("formulaireConsent") FormulaireConsent formulaireConsent
     ) {
-        LOG.log(Level.INFO, "photo orientation : " + orientation);
-        if (mail != null) {
-            LOG.log(Level.INFO, "mail : " + mail);
-        } else {
-            LOG.log(Level.INFO, "pas de mail : ");
-        }
-        LOG.log(Level.INFO, "responsable is null ? " + (formulaireConsent.getRepresentant() == null));
         String token = bearer.substring(bearer.lastIndexOf(" ") + 1);
         int id = -1;
         try {
