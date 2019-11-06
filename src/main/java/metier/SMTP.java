@@ -69,12 +69,29 @@ public class SMTP {
     }
 
     public static void sendFormConsent(Path pdfPath,String copyToMail) throws MessagingException, IOException {
+        Properties prop = new Properties();
+        try (InputStream input = new FileInputStream(SMTP_PROPS)) {
+            prop.load(input);
+        } catch (IOException ex) {
+            LOG.log(Level.SEVERE,"error smtp.properties",ex);
+        }
+        LOG.log(Level.INFO,prop.toString());
+        String mail = Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL);
+        LOG.log(Level.INFO,"mail :" + mail);
+        String pass = Utils.getProps(Constant.UNIGE_PROPS, Constant.MAIL_PASS);
+        LOG.log(Level.INFO,"pass :" + pass);
+        Session session = Session.getInstance(prop, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL), Utils.getProps(Constant.UNIGE_PROPS, Constant.MAIL_PASS));
+            }
+        });
         Message message = new MimeMessage(getSession());
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(Utils.getProps(Constant.UNIGE_PROPS, Constant.CONSENTEMENT_MAIL)));
         message.setSubject(EMAIL_SUBJECT_FORM);
         String msg = "Formulaire de consentement envoye depuis l'application";
-        
+
 //        if (copyToMail != null) {
 //            msg = msg + "\r\n" + "La personne désire une copie à l'adresse suivante : " + copyToMail;
 //        }
