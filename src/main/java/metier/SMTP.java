@@ -69,18 +69,6 @@ public class SMTP {
     }
 
     public static void sendFormConsent(Path pdfPath,String copyToMail) throws MessagingException, IOException {
-        Properties prop = new Properties();
-        try (InputStream input = new FileInputStream(SMTP_PROPS)) {
-            prop.load(input);
-        } catch (IOException ex) {
-            LOG.log(Level.SEVERE,"error smtp.properties",ex);
-        }
-        Session session = Session.getInstance(prop, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL), Utils.getProps(Constant.UNIGE_PROPS, Constant.MAIL_PASS));
-            }
-        });
         Message message = new MimeMessage(getSession());
         message.setFrom(new InternetAddress(Utils.getProps(Constant.UNIGE_PROPS, Constant.FROM_MAIL)));
         message.setRecipients(Message.RecipientType.TO,InternetAddress.parse(Utils.getProps(Constant.UNIGE_PROPS, Constant.CONSENTEMENT_MAIL)));

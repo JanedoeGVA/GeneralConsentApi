@@ -24,6 +24,7 @@ import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.MessagingException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
@@ -160,7 +161,14 @@ public class Main {
                     if (!DB.checkContactExist(email)) {
                         LOG.log(Level.INFO, "mail existe pas");
                         ChallengeCode challengeCode = generateChallengeCode(email);
-                        SMTP.sendMail(email, challengeCode.getCode());
+                        executor.execute(() -> {
+                            try {
+                                SMTP.sendMail(email, challengeCode.getCode());
+                            } catch (MessagingException ex) {
+                                LOG.log(Level.SEVERE, "java mail error", ex);
+                            }
+
+                        });
                         return Response.status(NO_CONTENT)
                                 .build();
                     } else {
@@ -175,15 +183,15 @@ public class Main {
                             .build();
                 }
             } else {
-                    return Response.status(UNAUTHORIZED)
-                            .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
-                            .build();
-                }
-            } catch (JwtException ex) {
                 return Response.status(UNAUTHORIZED)
                         .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
                         .build();
             }
+        } catch (JwtException ex) {
+            return Response.status(UNAUTHORIZED)
+                    .entity(new MessageError("invalid token", "Vous n'avez pas la permission "))
+                    .build();
+        }
     }
 
     private static ChallengeCode generateChallengeCode(String contact) throws Exception {
