@@ -307,7 +307,7 @@ public class PDFCreator {
             cos.setFont(fontBold, fontSizeText);
             cos.newLineAtOffset(border, ty);
             ;
-            cos.showText("Prenom :");
+            cos.showText("Prénom :");
             cos.endText();
 
             cos.beginText();
@@ -362,7 +362,7 @@ public class PDFCreator {
                 cos.beginText();
                 cos.setFont(fontBold, fontSizeText);
                 cos.newLineAtOffset(borderRepresentant, ty);
-                cos.showText("Prenom :");
+                cos.showText("Prénom :");
                 cos.endText();
                 cos.beginText();
                 cos.setFont(fontItalic, fontSizeText);
@@ -389,7 +389,7 @@ public class PDFCreator {
             cos.setFont(fontItalic, fontSizeText);
             cos.newLineAtOffset(border, ty);
             final String dateCreation = formatterWithHour.format(Date.from(Instant.now()));
-            cos.showText("Crée le " + dateCreation);
+            cos.showText("Créé le " + dateCreation);
             cos.endText();
 
             // Checkbox
@@ -398,7 +398,6 @@ public class PDFCreator {
             PDCheckBox checkBoxN = new PDCheckBox(acroForm);
             checkBoxY.setPartialName("oui");
             checkBoxN.setPartialName("non");
-            //PDAnnotationWidget widget = new PDAnnotationWidget();
             PDAnnotationWidget widgetY = checkBoxY.getWidgets().get(0);
             widgetY.setRectangle(new PDRectangle(150, 710, 10, 10));
             widgetY.setAnnotationFlags(4);
