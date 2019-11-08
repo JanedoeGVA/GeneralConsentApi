@@ -295,7 +295,7 @@ public class PDFCreator {
             cos.showText("Nom :");
             cos.endText();
             cos.beginText();
-            cos.setFont(fontItalic, fontSizeText);
+            cos.setFont(fontPlain, fontSizeText);
             cos.newLineAtOffset(border + 40, ty);
 
             cos.showText(formulaireConsent.getContact().getNom());
@@ -311,7 +311,7 @@ public class PDFCreator {
             cos.endText();
 
             cos.beginText();
-            cos.setFont(fontItalic, fontSizeText);
+            cos.setFont(fontPlain, fontSizeText);
             cos.newLineAtOffset(border + 55, ty);
             cos.showText(formulaireConsent.getContact().getPrenom());
             cos.endText();
@@ -326,7 +326,7 @@ public class PDFCreator {
             cos.endText();
 
             cos.beginText();
-            cos.setFont(fontItalic, fontSizeText);
+            cos.setFont(fontPlain, fontSizeText);
             cos.newLineAtOffset(border + 110, ty);
             cos.showText(formatter.format(Date.from(Instant.ofEpochSecond(formulaireConsent.getContact().getBirthday()))));
             cos.endText();
@@ -352,7 +352,7 @@ public class PDFCreator {
                 cos.showText("Nom :");
                 cos.endText();
                 cos.beginText();
-                cos.setFont(fontItalic, fontSizeText);
+                cos.setFont(fontPlain, fontSizeText);
                 cos.newLineAtOffset(borderRepresentant + 40, ty);
                 cos.showText(formulaireConsent.getRepresentant().getNom());
                 cos.endText();
@@ -365,7 +365,7 @@ public class PDFCreator {
                 cos.showText("Prénom :");
                 cos.endText();
                 cos.beginText();
-                cos.setFont(fontItalic, fontSizeText);
+                cos.setFont(fontPlain, fontSizeText);
                 cos.newLineAtOffset(borderRepresentant + 55, ty);
                 cos.showText(formulaireConsent.getRepresentant().getPrenom());
                 cos.endText();
@@ -378,7 +378,7 @@ public class PDFCreator {
                 cos.showText("Relation :");
                 cos.endText();
                 cos.beginText();
-                cos.setFont(fontItalic, fontSizeText);
+                cos.setFont(fontPlain, fontSizeText);
                 cos.newLineAtOffset(borderRepresentant + 57, ty);
                 cos.showText(formulaireConsent.getRepresentant().getRelation());
                 cos.endText();
